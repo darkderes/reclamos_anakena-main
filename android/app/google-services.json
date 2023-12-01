@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "668596249826",
+    "project_id": "anakenareclamos",
+    "storage_bucket": "anakenareclamos.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668596249826:android:fb192e8b733cea5ed9aabb",
+        "android_client_info": {
+          "package_name": "com.example.reclamos_anakena"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH8PwrU3GtlDwHp0gx57ZuOlddVRbDvVs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
