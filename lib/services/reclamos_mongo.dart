@@ -1,24 +1,27 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:reclamos_anakena/models/reclamo.dart';
 
-
-
-void insertarReclamo(Reclamo reclamo) async {
-  var db = await Db.create('mongodb+srv://jdarderes:Jadv0106@clusteranakena.eckzerk.mongodb.net/reclamos?retryWrites=true&w=majority');
+Future<String> insertarReclamo(Reclamo reclamo) async {
+  String env = dotenv.get('MONGODB_URI');
+  var db = await Db.create(env);
   await db.open();
   var reclamosCollection = db.collection('reclamos');
   WriteResult result = await reclamosCollection.insertOne(reclamo.toMap());
   await db.close();
   if (result.ok == 1) {
-    print('Reclamo insertado correctamente');
+    return result.id.toHexString();
   } else {
-    print('Error al insertar reclamo');
+    return 'Error al insertar reclamo';
   }
-
 }
+
 Future<List<Reclamo>> obtenerReclamos() async {
   // Conectarse a la base de datos MongoDB
-  var db = await Db.create('mongodb+srv://jdarderes:Jadv0106@clusteranakena.eckzerk.mongodb.net/reclamos?retryWrites=true&w=majority');
+
+  var env = dotenv.get('MONGODB_URI');
+  var db = await Db.create(env.toString());
+
   await db.open();
 
   // Obtener la colección de reclamos
@@ -40,6 +43,7 @@ Future<List<Reclamo>> obtenerReclamos() async {
       data['embarque'],
       data['comercial'],
       data['motivo'],
+      data['tipoReclamo'],
       data['personal'],
       data['resolucion'],
       data['estado'],
@@ -48,5 +52,3 @@ Future<List<Reclamo>> obtenerReclamos() async {
 
   return reclamos;
 }
-
-

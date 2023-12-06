@@ -8,12 +8,23 @@ class Reclamo {
   String embarque;
   String comercial;
   String motivo;
+  String tipoReclamo;
   String personal;
   String resolucion;
   String estado;
- 
 
-  Reclamo( this.objectId, this.fechaReclamo,fechaIngreso, this.nombreCliente, this.embarque, this.comercial, this.motivo, this.personal, this.resolucion,this.estado);
+  Reclamo(
+      this.objectId,
+      this.fechaReclamo,
+      fechaIngreso,
+      this.nombreCliente,
+      this.embarque,
+      this.comercial,
+      this.motivo,
+      this.tipoReclamo,
+      this.personal,
+      this.resolucion,
+      this.estado);
 
   Map<String, dynamic> toMap() {
     return {
@@ -24,6 +35,7 @@ class Reclamo {
       'embarque': embarque,
       'comercial': comercial,
       'motivo': motivo,
+      'tipoReclamo': tipoReclamo,
       'personal': personal,
       'resolucion': resolucion,
       'estado': estado,

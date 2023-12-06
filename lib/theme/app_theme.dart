@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 const colorList = <Color>[
   Colors.blue,
-  Color.fromARGB(255, 3, 70, 63),
+  Color.fromARGB(255, 82, 51, 39),
   Colors.green,
   Colors.red,
   Colors.purple,
@@ -28,8 +28,20 @@ class AppTheme {
     useMaterial3: true,
     colorSchemeSeed: colorList[ selectedColor ],
     appBarTheme: const AppBarTheme(
-      centerTitle: false
+      centerTitle: true,
+      backgroundColor: Color.fromARGB(255, 82, 51, 39),
+      titleTextStyle: TextStyle(
+        color: Colors.white,
+        
+        fontSize: 25,
+      
+      ),
+      iconTheme: IconThemeData(
+        color: Colors.white,
+        size: 30,
+      ),
     )
   );
+
 
 }

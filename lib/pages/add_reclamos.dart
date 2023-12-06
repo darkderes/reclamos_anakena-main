@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:reclamos_anakena/models/imagenes_reclamos.dart';
+import 'package:reclamos_anakena/services/image_picker.dart';
+import 'package:reclamos_anakena/services/image_upload.dart';
+import 'package:reclamos_anakena/services/imagenes_mongo.dart';
 import '../models/reclamo.dart';
 import '../services/provider_reclamos.dart';
 
@@ -36,7 +41,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
   TextEditingController motivoController = TextEditingController(text: '');
   TextEditingController personalController = TextEditingController(text: '');
   TextEditingController resolucionController = TextEditingController(text: '');
-
+  String dropdownValue = 'Inocuidad';
   @override
   String? get restorationId => "add_reclamos_page";
 
@@ -93,138 +98,240 @@ class _AddReclamosPageState extends State<AddReclamosPage>
 
   @override
   Widget build(BuildContext context) {
-       var myProvider = Provider.of<Myprovider>(context);
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    var myProvider = Provider.of<Myprovider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        actions: [
+          IconButton(
+              onPressed: () async {
+                List<XFile> url = await seleccionarImagen();
+                // uploadImage(url.path);
+                for (var i = 0; i < url.length; i++) {
+                  String? Url = await uploadImage(url[i].path);
+                  if (Url != null) {
+                    var imagenes = Imagenes(
+                      null,
+                      Url,
+                      myProvider.reclamoId,
+                    );
+                    insertarImagenesMongo(imagenes);
+                  }
+                }
+                print('image ok');
+              },
+              icon: const Icon(Icons.upload_file))
+        ],
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // DatePickerDialog(initialDate: DateTime(2023), firstDate: DateTime(2023), lastDate: DateTime.now()),
-            // add edittext de cliente
-            // DateRangePickerDialog(firstDate: DateTime(2023), lastDate: DateTime.now()),
-            OutlinedButton(
-                onPressed: () {
-                  _restorableDatePickerRouteFuture.present();
-                },
-                child: const Text('Fecha de reclamo')),
-            Text(
-                'Fecha reclamo : ${_selectedDate.value.day.toString()} - ${_selectedDate.value.month.toString()} - ${_selectedDate.value.year}'),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: TextField(
-                controller: nombreClienteController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Cliente',
-                  labelText: 'Nombre de cliente',
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+           // mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: Center(
+                  child: Image.asset(
+                      'assets/images/logoAnakena.png'), // Reemplaza 'assets/logo.png' con la ruta de tu imagen de logo
                 ),
+              ),     const Padding(
+                    padding: EdgeInsets.only(bottom:20.0),
+                    child: Text('Datos Comercial',
+                        style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold,color: Colors.brown)),
+                  ),
+              Row(
+                 mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+             
+                  Padding(
+                    padding: const EdgeInsets.only(right:20.0,bottom: 20.0),
+                    child: Text(
+                        'Fecha reclamo : ${_selectedDate.value.day.toString()} - ${_selectedDate.value.month.toString()} - ${_selectedDate.value.year}',
+                        style: const TextStyle(fontSize: 20)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom:20.0),
+                    child: OutlinedButton(
+                        onPressed: () {
+                          _restorableDatePickerRouteFuture.present();
+                        },
+                        child: const Text('Seleccionar fecha')),
+                  ),
+                
+                ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: TextField(
-                controller: embarqueController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'N° de Embarque',
-                  labelText: 'N° de Embarque',
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: TextField(
-                controller: comercialController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Comercial a cargo',
-                  labelText: 'Comercial a cargo',
-                ),
-              ),
-            ),
-            const Divider(),
-            // crear campo de observaciones multilinea
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: TextField(
-                controller: motivoController,
-                // enabled: widget.visita.estado == "0" ? true : false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Motivo',
-                ),
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
-              ),
-            ),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: TextField(
-                controller: personalController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Personal a cargo resolución',
-                  labelText: 'Personal a cargo resolución',
-                ),
-              ),
-            ),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: TextField(
-                controller: resolucionController,
-                // enabled: widget.visita.estado == "0" ? true : false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Resolución',
-                ),
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
-              ),
-            ),
+          
+              Row(
+                 mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 200,
+                    child: Padding(
 
-            FloatingActionButton.extended(
-                onPressed: () {
-                  var nuevoReclamo = Reclamo(
-                    null,
-
-                    // Id del reclamo
-                    _selectedDate.value
-                        .toString(), // Fecha de reclamo en formato de cadena
-                    DateTime.now(), // Fecha de ingreso en formato de cadena
-                    nombreClienteController.text, // Nombre de cliente
-                    embarqueController.text, // N° de embarque
-                    comercialController.text, // Comercial a cargo
-                    motivoController.text, // Motivo
-                    personalController.text, // Personal a cargo de resolución
-                    resolucionController.text, // Resolución
-                    'En Proceso',
-                  );
-                  myProvider.addReclamo(nuevoReclamo);
-                  //insertarReclamo(nuevoReclamo);
-                  Navigator.pop(context);
-                },
-                icon: const Icon(Icons.save),
-                label: const Text('Ingreso de reclamo')),
-          ],
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: embarqueController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'N° de Embarque',
+                          labelText: 'N° de Embarque',
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right:8.0),
+                    child: Container(
+                      width: 400,
+                      child: TextField(
+                        controller: nombreClienteController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Nombre de cliente',
+                          labelText: 'Nombre de cliente',
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 400,
+                    child: TextField(
+                      controller: comercialController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Comercial a cargo',
+                        labelText: 'Comercial a cargo',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // crear campo de observaciones multilinea
+              Container(
+                width: 1003,
+                child: Padding(
+                  padding: const EdgeInsets.only(left:4.0,top: 20.0,bottom: 20.0),
+                  child: TextField(
+                    controller: motivoController,
+                    // enabled: widget.visita.estado == "0" ? true : false,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Motivo',
+                    ),
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ),
+              ),
+              const Divider(),
+              const Padding(
+                    padding: EdgeInsets.only(bottom:10.0),
+                    child: Text('Datos Control de calidad',
+                        style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold,color: Colors.brown)),
+                  ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child:
+                        Text('Tipo de reclamo', style: TextStyle(fontSize: 20)),
+                  ),
+                  Container(
+                    width: 240,
+                   // margin: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(10.0),
+                    child: DropdownButton<String>(
+                      value: dropdownValue,
+                      isExpanded: true,
+                      icon: const Icon(Icons.arrow_downward),
+                      iconSize: 24,
+                      elevation: 16,
+          
+                      //  style: const TextStyle(color: Colors.deepPurple),
+                      underline: Container(
+                        height: 3,
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                      ),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          dropdownValue = newValue ?? 'Default';
+                        });
+                      },
+                      items: <String>['Inocuidad', 'Calidad', 'Otros']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(value),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ), Padding(
+                padding: const EdgeInsets.all(20),
+                child: Container(
+                  width: 600,
+                  child: TextField(
+                    controller: personalController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Personal a cargo resolución',
+                      labelText: 'Personal a cargo resolución',
+                    ),
+                  ),
+                ),
+              ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Container(
+                  width: 1000,
+                  child: TextField(
+                    controller: resolucionController,
+                    // enabled: widget.visita.estado == "0" ? true : false,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Resolución',
+                    ),
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ),
+              ),
+          
+              Padding(
+                padding: const EdgeInsets.only(top:30.0),
+                child: FloatingActionButton.extended(
+                    onPressed: () {
+                      var nuevoReclamo = Reclamo(
+                        null,
+                          
+                        // Id del reclamo
+                        _selectedDate.value
+                            .toString(), // Fecha de reclamo en formato de cadena
+                        DateTime.now(), // Fecha de ingreso en formato de cadena
+                        nombreClienteController.text, // Nombre de cliente
+                        embarqueController.text, // N° de embarque
+                        comercialController.text, // Comercial a cargo
+                        motivoController.text,
+                        dropdownValue, // Motivo
+                        personalController.text, // Personal a cargo de resolución
+                        resolucionController.text, // Resolución
+                        'En Proceso',
+                      );
+                      myProvider.addReclamo(nuevoReclamo);
+                      //insertarReclamo(nuevoReclamo);
+                      // Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.save),
+                    label: const Text('Ingreso de reclamo')),
+              ),
+            ],
+          ),
         ),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.

@@ -15,15 +15,6 @@ class AdminReclamos extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -34,44 +25,54 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
 
-
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
+      // appBar: AppBar(
+
+      //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      //   title: Text(widget.title),
+      // ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(30.0),
+              child: Center(
+                child: Image.asset('assets/images/logoAnakena.png',
+                    
+                ), // Reemplaza 'assets/logo.png' con la ruta de tu imagen de logo
+              ),
+            ),
+               const Text(
+                'Listado de Reclamos',style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.brown)
+              ),
             Consumer<Myprovider>(
               builder: (context, myProvider, child) {
                 return Expanded(
-                  child: ListView.builder(
-                    itemCount: myProvider.reclamos.length,
-                    itemBuilder: (context, index) {
-                      var reclamo = myProvider.reclamos[index];
-                      return Card(
-                        child: ListTile(
-                          title: Text(reclamo.nombreCliente),
-                          subtitle: Text(reclamo.embarque),
-                          trailing: Text(reclamo.estado),
-                        ),
-                      );
-                    },
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: ListView.builder(
+                      itemCount: myProvider.reclamos.length,
+                      itemBuilder: (context, index) {
+                        var reclamo = myProvider.reclamos[index];
+                        return Card(
+                          child: ListTile(
+                            title: Text(reclamo.nombreCliente,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                            subtitle: Text(
+                                "N° Embarque: ${reclamo.embarque}  - Tipo Reclamo: ${reclamo.tipoReclamo}"),
+                            trailing: Text(reclamo.estado),
+                            onTap: () {
+                              Navigator.pushNamed(context, "/details_reclamos",
+                                  arguments: reclamo);
+                            },
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 );
               },
@@ -79,12 +80,13 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, "/add_reclamos");
           setState(() {});
         },
-        tooltip: 'Increment',
+        tooltip: 'Agregar Reclamo',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
