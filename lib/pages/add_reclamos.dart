@@ -104,24 +104,30 @@ class _AddReclamosPageState extends State<AddReclamosPage>
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
-          IconButton(
-              onPressed: () async {
-                List<XFile> url = await seleccionarImagen();
-                // uploadImage(url.path);
-                for (var i = 0; i < url.length; i++) {
-                  String? Url = await uploadImage(url[i].path);
-                  if (Url != null) {
-                    var imagenes = Imagenes(
-                      null,
-                      Url,
-                      myProvider.reclamoId,
-                    );
-                    insertarImagenesMongo(imagenes);
-                  }
-                }
-                print('image ok');
-              },
-              icon: const Icon(Icons.upload_file))
+          Padding(
+            padding: const EdgeInsets.only(right:20.0),
+            child: Visibility(
+              visible: myProvider.reclamoId != "" ? true : false,
+              child: IconButton(
+                  onPressed: () async {
+                    List<XFile> url = await seleccionarImagen();
+                    // uploadImage(url.path);
+                    for (var i = 0; i < url.length; i++) {
+                      String? urlImage = await uploadImage(url[i].path);
+                      if (urlImage != null) {
+                        var imagenes = Imagenes(
+                          null,
+                          urlImage,
+                          myProvider.reclamoId,
+                        );
+                        insertarImagenesMongo(imagenes);
+                      }
+                    }
+                    print('image ok');
+                  },
+                  icon: const Icon(Icons.add_a_photo_sharp)),
+            ),
+          )
         ],
       ),
       body: SingleChildScrollView(
@@ -272,7 +278,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                     ),
                   ), Padding(
                 padding: const EdgeInsets.all(20),
-                child: Container(
+                child: SizedBox(
                   width: 600,
                   child: TextField(
                     controller: personalController,
@@ -288,7 +294,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
               ),
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: Container(
+                child: SizedBox(
                   width: 1000,
                   child: TextField(
                     controller: resolucionController,
@@ -304,7 +310,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
               ),
           
               Padding(
-                padding: const EdgeInsets.only(top:30.0),
+                padding: const EdgeInsets.only(top:30.0,bottom: 30.0),
                 child: FloatingActionButton.extended(
                     onPressed: () {
                       var nuevoReclamo = Reclamo(

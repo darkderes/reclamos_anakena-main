@@ -20,6 +20,13 @@ class Myprovider with ChangeNotifier {
     reclamos.sort((a, b) => a.fechaReclamo.compareTo(b.fechaReclamo));
     notifyListeners();
   }
+  Future<String> updateReclamo(String id,String motivo,String resolucion) async {
+    String res = await modificarReclamo(id, motivo,resolucion);
+    reclamos = await obtenerReclamos();
+    reclamos.sort((a, b) => a.fechaReclamo.compareTo(b.fechaReclamo));
+    notifyListeners();
+    return res;
+  }
 }
  // notificar obtenerReclamos
   
