@@ -1,14 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:reclamos_anakena/models/imagenes_reclamos.dart';
-import 'package:reclamos_anakena/models/reclamo.dart';
-import 'package:reclamos_anakena/services/image_picker.dart';
-import 'package:reclamos_anakena/services/image_upload.dart';
-import 'package:reclamos_anakena/services/imagenes_mongo.dart';
-import 'package:reclamos_anakena/services/provider_reclamos.dart';
-
+import 'package:reclamos_anakena/barrels.dart';
 
 class DetailsReclamos extends StatefulWidget {
   final Reclamo reclamo;
@@ -21,18 +12,20 @@ class DetailsReclamos extends StatefulWidget {
 class _DetailsReclamosState extends State<DetailsReclamos> {
   TextEditingController motivoController = TextEditingController(text: '');
   TextEditingController resolucionController = TextEditingController(text: '');
+  bool _isChecked = false;
   @override
   Widget build(BuildContext context) {
-    var myProvider = Provider.of<Myprovider>(context);
+    Provider.of<Myprovider>(context);
     Reclamo reclamo = widget.reclamo;
     motivoController.text = reclamo.motivo;
     resolucionController.text = reclamo.resolucion;
+    if (reclamo.estado == "Finalizado") {
+      _isChecked = true;
+    }
+   
     return Scaffold(
       appBar: AppBar(
-          //       iconTheme: IconThemeData(
-          //       size: 40,
-          //   color: Colors.white, //change your color here
-          // ),
+
           title: const Text("Detalles Reclamos"),
           actions: <Widget>[
             IconButton(
@@ -43,28 +36,31 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
               },
             ),
             Padding(
-              padding: const EdgeInsets.only(right:20.0),
-              child: IconButton(
-                  onPressed: () async {
-                    List<XFile> url = await seleccionarImagen();
-                    // uploadImage(url.path);
-                    for (var i = 0; i < url.length; i++) {
-                      String? Url = await uploadImage(url[i].path);
-                      if (Url != null) {
-                        var imagenes = Imagenes(
-                          null,
-                          Url,
-                          widget.reclamo.objectId!.toHexString(),
-                        );
-                        insertarImagenesMongo(imagenes);
+              padding: const EdgeInsets.only(right: 20.0),
+              child: Visibility(
+                visible: reclamo.estado == "Finalizado" ? false : true,
+                child: IconButton(
+                    onPressed: () async {
+                      List<XFile> url = await seleccionarImagen();
+                      // uploadImage(url.path);
+                      for (var i = 0; i < url.length; i++) {
+                        String? urlImage = await uploadImage(url[i].path);
+                        if (urlImage != null) {
+                          var imagenes = Imagenes(
+                            null,
+                            urlImage,
+                            widget.reclamo.objectId!.toHexString(),
+                          );
+                          insertarImagenesMongo(imagenes);
+                        }
                       }
-                    }
-                    print('image ok');
-                  },
-                  icon: const Icon(
-                    Icons.add_a_photo,
-                    color: Colors.white,
-                  )),
+                      debugPrint('image ok');
+                    },
+                    icon: const Icon(
+                      Icons.add_a_photo,
+                      color: Colors.white,
+                    )),
+              ),
             )
           ]),
       body: Padding(
@@ -91,7 +87,8 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
               ),
               Text(
                 "Fecha reclamo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(reclamo.fechaReclamo))}",
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
               Row(
@@ -120,10 +117,10 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
               SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
                 child: Padding(
-                  padding: const EdgeInsets.only(top:20.0,bottom: 20.0),
+                  padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
                   child: TextField(
                     controller: motivoController,
-                    // enabled: widget.visita.estado == "0" ? true : false,
+                    readOnly: reclamo.estado == "Finalizado" ? true : false,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Motivo',
@@ -134,12 +131,15 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                 ),
               ),
               const SizedBox(height: 10),
-                  const Divider(),
+              const Divider(),
               const Padding(
-                    padding: EdgeInsets.only(bottom:10.0),
-                    child: Text('Datos Control de calidad',
-                        style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold,color: Colors.brown)),
-                  ),
+                padding: EdgeInsets.only(bottom: 10.0),
+                child: Text('Datos Control de calidad',
+                    style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.brown)),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -160,10 +160,10 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
               SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
                 child: Padding(
-                  padding: const EdgeInsets.only(top:20.0,bottom: 20.0),
+                  padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
                   child: TextField(
                     controller: resolucionController,
-                    // enabled: widget.visita.estado == "0" ? true : false,
+                    readOnly: reclamo.estado == "Finalizado" ? true : false,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Resolución reclamo',
@@ -173,38 +173,58 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                   ),
                 ),
               ),
-                 Padding(
-                  padding: const EdgeInsets.only(top:30.0,bottom: 30.0),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 1.95,
+                child: CheckboxListTile(
+                  title: const Text("Resolución finalizada"),
+                  value: _isChecked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _isChecked = value!;
+                    });
+                  },
+                  controlAffinity: ListTileControlAffinity
+                      .leading, // coloca el checkbox al inicio del texto
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 30.0, bottom: 30.0),
+                child: Visibility(
+                  visible: reclamo.estado == "Finalizado" ? false : true,
                   child: FloatingActionButton.extended(
                       onPressed: () async {
-                         String resp = await  Provider.of<Myprovider>(context, listen: false).updateReclamo(
+                        String resp =
+                            await Provider.of<Myprovider>(context, listen: false)
+                                .updateReclamo(
                           reclamo.objectId!.toHexString(),
                           motivoController.text,
                           resolucionController.text,
+                          _isChecked ? "Finalizado" : "En proceso",
                         );
-                          showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Respuesta'),
-        content: Text(resp),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('OK'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-                      
-                       // Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Respuesta'),
+                              content: Text(resp),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                  
+                        // Navigator.pop(context);
                       },
                       icon: const Icon(Icons.save),
                       label: const Text('Actualizar de reclamo')),
                 ),
+              ),
             ],
           ),
         ),

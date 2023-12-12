@@ -1,12 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:reclamos_anakena/models/imagenes_reclamos.dart';
-import 'package:reclamos_anakena/services/image_picker.dart';
-import 'package:reclamos_anakena/services/image_upload.dart';
-import 'package:reclamos_anakena/services/imagenes_mongo.dart';
-import '../models/reclamo.dart';
-import '../services/provider_reclamos.dart';
+import 'package:reclamos_anakena/barrels.dart';
 
 class AddReclamos extends StatefulWidget {
   const AddReclamos({super.key});
@@ -45,8 +37,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
   @override
   String? get restorationId => "add_reclamos_page";
 
-  final RestorableDateTime _selectedDate =
-      RestorableDateTime(DateTime(2021, 7, 25));
+  final RestorableDateTime _selectedDate = RestorableDateTime(DateTime.now());
   late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture =
       RestorableRouteFuture<DateTime?>(
     onComplete: _selectDate,
@@ -70,8 +61,8 @@ class _AddReclamosPageState extends State<AddReclamosPage>
           restorationId: 'date_picker_dialog',
           initialEntryMode: DatePickerEntryMode.calendarOnly,
           initialDate: DateTime.fromMillisecondsSinceEpoch(arguments! as int),
-          firstDate: DateTime(2021),
-          lastDate: DateTime(2022),
+          firstDate: DateTime.now().subtract(const Duration(days: 365)),
+          lastDate: DateTime.now(),
         );
       },
     );
@@ -105,7 +96,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
         title: Text(widget.title),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right:20.0),
+            padding: const EdgeInsets.only(right: 20.0),
             child: Visibility(
               visible: myProvider.reclamoId != "" ? true : false,
               child: IconButton(
@@ -123,7 +114,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                         insertarImagenesMongo(imagenes);
                       }
                     }
-                    print('image ok');
+                    debugPrint('image ok');
                   },
                   icon: const Icon(Icons.add_a_photo_sharp)),
             ),
@@ -133,7 +124,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
       body: SingleChildScrollView(
         child: Center(
           child: Column(
-           // mainAxisAlignment: MainAxisAlignment.center,
+            // mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(30.0),
@@ -141,40 +132,41 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                   child: Image.asset(
                       'assets/images/logoAnakena.png'), // Reemplaza 'assets/logo.png' con la ruta de tu imagen de logo
                 ),
-              ),     const Padding(
-                    padding: EdgeInsets.only(bottom:20.0),
-                    child: Text('Datos Comercial',
-                        style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold,color: Colors.brown)),
-                  ),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 20.0),
+                child: Text('Datos Comercial',
+                    style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.brown)),
+              ),
               Row(
-                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-             
                   Padding(
-                    padding: const EdgeInsets.only(right:20.0,bottom: 20.0),
+                    padding: const EdgeInsets.only(right: 20.0, bottom: 20.0),
                     child: Text(
                         'Fecha reclamo : ${_selectedDate.value.day.toString()} - ${_selectedDate.value.month.toString()} - ${_selectedDate.value.year}',
                         style: const TextStyle(fontSize: 20)),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom:20.0),
+                    padding: const EdgeInsets.only(bottom: 20.0),
                     child: OutlinedButton(
                         onPressed: () {
                           _restorableDatePickerRouteFuture.present();
                         },
                         child: const Text('Seleccionar fecha')),
                   ),
-                
                 ],
               ),
-          
+
               Row(
-                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
+                  SizedBox(
                     width: 200,
                     child: Padding(
-
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
                         controller: embarqueController,
@@ -187,8 +179,8 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right:8.0),
-                    child: Container(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: SizedBox(
                       width: 400,
                       child: TextField(
                         controller: nombreClienteController,
@@ -200,7 +192,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                       ),
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     width: 400,
                     child: TextField(
                       controller: comercialController,
@@ -214,10 +206,11 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                 ],
               ),
               // crear campo de observaciones multilinea
-              Container(
+              SizedBox(
                 width: 1003,
                 child: Padding(
-                  padding: const EdgeInsets.only(left:4.0,top: 20.0,bottom: 20.0),
+                  padding:
+                      const EdgeInsets.only(left: 4.0, top: 20.0, bottom: 20.0),
                   child: TextField(
                     controller: motivoController,
                     // enabled: widget.visita.estado == "0" ? true : false,
@@ -232,10 +225,13 @@ class _AddReclamosPageState extends State<AddReclamosPage>
               ),
               const Divider(),
               const Padding(
-                    padding: EdgeInsets.only(bottom:10.0),
-                    child: Text('Datos Control de calidad',
-                        style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold,color: Colors.brown)),
-                  ),
+                padding: EdgeInsets.only(bottom: 10.0),
+                child: Text('Datos Control de calidad',
+                    style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.brown)),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -246,7 +242,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                   ),
                   Container(
                     width: 240,
-                   // margin: const EdgeInsets.all(20.0),
+                    // margin: const EdgeInsets.all(20.0),
                     padding: const EdgeInsets.all(10.0),
                     child: DropdownButton<String>(
                       value: dropdownValue,
@@ -254,7 +250,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                       icon: const Icon(Icons.arrow_downward),
                       iconSize: 24,
                       elevation: 16,
-          
+
                       //  style: const TextStyle(color: Colors.deepPurple),
                       underline: Container(
                         height: 3,
@@ -276,20 +272,21 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                         );
                       }).toList(),
                     ),
-                  ), Padding(
-                padding: const EdgeInsets.all(20),
-                child: SizedBox(
-                  width: 600,
-                  child: TextField(
-                    controller: personalController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Personal a cargo resolución',
-                      labelText: 'Personal a cargo resolución',
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: SizedBox(
+                      width: 600,
+                      child: TextField(
+                        controller: personalController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Personal a cargo resolución',
+                          labelText: 'Personal a cargo resolución',
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
                 ],
               ),
               Padding(
@@ -308,14 +305,14 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                   ),
                 ),
               ),
-          
+
               Padding(
-                padding: const EdgeInsets.only(top:30.0,bottom: 30.0),
+                padding: const EdgeInsets.only(top: 30.0, bottom: 30.0),
                 child: FloatingActionButton.extended(
                     onPressed: () {
                       var nuevoReclamo = Reclamo(
                         null,
-                          
+
                         // Id del reclamo
                         _selectedDate.value
                             .toString(), // Fecha de reclamo en formato de cadena
@@ -325,13 +322,40 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                         comercialController.text, // Comercial a cargo
                         motivoController.text,
                         dropdownValue, // Motivo
-                        personalController.text, // Personal a cargo de resolución
+                        personalController
+                            .text, // Personal a cargo de resolución
                         resolucionController.text, // Resolución
                         'En Proceso',
                       );
-                      myProvider.addReclamo(nuevoReclamo);
-                      //insertarReclamo(nuevoReclamo);
-                      // Navigator.pop(context);
+                      if (myProvider.reclamoId == "") {
+                        myProvider.addReclamo(nuevoReclamo);
+                      } else {
+                        myProvider.updateReclamo(
+                            myProvider.reclamoId,
+                            motivoController.text,
+                            resolucionController.text,
+                            'En Proceso');
+                      }
+                     // myProvider.addReclamo(nuevoReclamo);
+                      String resp = myProvider.reclamoId == "0"
+                          ? "Ocurrio un error"
+                          : "Reclamo guardado correctamente";
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(resp),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Aceptar'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     },
                     icon: const Icon(Icons.save),
                     label: const Text('Ingreso de reclamo')),

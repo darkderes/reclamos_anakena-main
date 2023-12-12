@@ -14,12 +14,11 @@ Future<String?> uploadImage(String urlPath) async {
     final responseString = String.fromCharCodes(responseData);
     final data = jsonDecode(responseString);
     final imageUrl = data['url'];
-    print(imageUrl);
     return imageUrl;
   } else {
-    print(response.reasonPhrase);
     null;
   }
+  return null;
 }
 
 

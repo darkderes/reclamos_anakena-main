@@ -12,7 +12,7 @@ Future<String> insertarReclamo(Reclamo reclamo) async {
   if (result.ok == 1) {
     return result.id.toHexString();
   } else {
-    return 'Error al insertar reclamo';
+    return '0';
   }
 }
 
@@ -25,12 +25,8 @@ Future<List<Reclamo>> obtenerReclamos() async {
   await db.open();
 
   // Obtener la colección de reclamos
-  var reclamosCollection = db.collection('reclamos');
+  var reclamosData = await db.collection('reclamos').find().toList();
 
-  // Consultar todos los documentos en la colección
-  var reclamosData = await reclamosCollection.find().toList();
-
-  // Cerrar la conexión a la base de datos
   await db.close();
 
   // Convertir los documentos en reclamos
@@ -53,7 +49,7 @@ Future<List<Reclamo>> obtenerReclamos() async {
   return reclamos;
 }
 
-Future<String> modificarReclamo(String id, String nuevoMotivo, String nuevaResolucion) async {
+Future<String> modificarReclamo(String id, String nuevoMotivo, String nuevaResolucion,String estado) async {
   var env = dotenv.get('MONGODB_URI');
   var db = await Db.create(env.toString());
 
@@ -63,7 +59,7 @@ Future<String> modificarReclamo(String id, String nuevoMotivo, String nuevaResol
 
   var result = await reclamosCollection.updateOne(
     where.eq('_id', ObjectId.parse(id)),
-    modify.set('motivo', nuevoMotivo).set('resolucion', nuevaResolucion),
+    modify.set('motivo', nuevoMotivo).set('resolucion', nuevaResolucion).set("estado", estado),
   );
 
   await db.close();

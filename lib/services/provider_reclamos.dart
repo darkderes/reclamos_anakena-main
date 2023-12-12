@@ -8,22 +8,19 @@ class Myprovider with ChangeNotifier {
   Myprovider() {
     obtenerReclamos().then((value) {
       reclamos = value;
-       reclamos.sort((a, b) => a.fechaReclamo.compareTo(b.fechaReclamo));
+       reclamos.sort((a, b) => b.fechaIngreso.compareTo(a.fechaIngreso));
       notifyListeners();
     });
   }
- // List<Reclamo> get reclamos => _reclamos;
-
-  void addReclamo(Reclamo reclamo) async {
+   Future<String> addReclamo(Reclamo reclamo) async {
     reclamoId = await insertarReclamo(reclamo);
     reclamos = await obtenerReclamos();
-    reclamos.sort((a, b) => a.fechaReclamo.compareTo(b.fechaReclamo));
     notifyListeners();
+    return reclamoId;
   }
-  Future<String> updateReclamo(String id,String motivo,String resolucion) async {
-    String res = await modificarReclamo(id, motivo,resolucion);
+  Future<String> updateReclamo(String id,String motivo,String resolucion,String estado) async {
+    String res = await modificarReclamo(id, motivo,resolucion,estado);
     reclamos = await obtenerReclamos();
-    reclamos.sort((a, b) => a.fechaReclamo.compareTo(b.fechaReclamo));
     notifyListeners();
     return res;
   }

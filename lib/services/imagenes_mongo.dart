@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:reclamos_anakena/models/imagenes_reclamos.dart';
@@ -10,9 +11,9 @@ void insertarImagenesMongo(Imagenes imagenes) async {
   WriteResult result = await imagenesCollection.insertOne(imagenes.toMap());
   await db.close();
   if (result.ok == 1) {
-    print('Imagenes insertado correctamente');
+    debugPrint('Imagenes insertado correctamente');
   } else {
-    print('Error al insertar imagenes');
+    debugPrint('Error al insertar imagenes');
   }
 }
 
