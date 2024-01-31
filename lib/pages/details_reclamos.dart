@@ -201,6 +201,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                           resolucionController.text,
                           _isChecked ? "Finalizado" : "En proceso",
                         );
+                        if (!mounted) return;
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {

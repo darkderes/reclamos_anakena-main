@@ -30,10 +30,13 @@ class _AddReclamosPageState extends State<AddReclamosPage>
       TextEditingController(text: '');
   TextEditingController embarqueController = TextEditingController(text: '');
   TextEditingController comercialController = TextEditingController(text: '');
-  TextEditingController motivoController = TextEditingController(text: '');
-  TextEditingController personalController = TextEditingController(text: '');
-  TextEditingController resolucionController = TextEditingController(text: '');
-  String dropdownValue = 'Inocuidad';
+  TextEditingController observacionMotivoController =
+      TextEditingController(text: '');
+  // TextEditingController personalController = TextEditingController(text: '');
+  // TextEditingController resolucionController = TextEditingController(text: '');
+  // String dropdownValue = 'Inocuidad';
+  String dropdownValueTipo = 'Reclamo';
+
   @override
   String? get restorationId => "add_reclamos_page";
 
@@ -126,20 +129,16 @@ class _AddReclamosPageState extends State<AddReclamosPage>
           child: Column(
             // mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(30.0),
+              const Padding(
+                padding: EdgeInsets.all(30.0),
                 child: Center(
-                  child: Image.asset(
-                      'assets/images/logoAnakena.png'), // Reemplaza 'assets/logo.png' con la ruta de tu imagen de logo
+                  child:
+                      LogoAnakena(), // Reemplaza 'assets/logo.png' con la ruta de tu imagen de logo
                 ),
               ),
               const Padding(
                 padding: EdgeInsets.only(bottom: 20.0),
-                child: Text('Datos Comercial',
-                    style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.brown)),
+                child: TextTitle(titlle: 'Datos de reclamo', fontSize: 26),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -160,92 +159,19 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                   ),
                 ],
               ),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 200,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: embarqueController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'N° de Embarque',
-                          labelText: 'N° de Embarque',
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: SizedBox(
-                      width: 400,
-                      child: TextField(
-                        controller: nombreClienteController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Nombre de cliente',
-                          labelText: 'Nombre de cliente',
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 400,
-                    child: TextField(
-                      controller: comercialController,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Comercial a cargo',
-                        labelText: 'Comercial a cargo',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              // crear campo de observaciones multilinea
-              SizedBox(
-                width: 1003,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 4.0, top: 20.0, bottom: 20.0),
-                  child: TextField(
-                    controller: motivoController,
-                    // enabled: widget.visita.estado == "0" ? true : false,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Motivo',
-                    ),
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
-                  ),
-                ),
-              ),
-              const Divider(),
-              const Padding(
-                padding: EdgeInsets.only(bottom: 10.0),
-                child: Text('Datos Control de calidad',
-                    style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.brown)),
-              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child:
-                        Text('Tipo de reclamo', style: TextStyle(fontSize: 20)),
+                    child: Text('Tipo', style: TextStyle(fontSize: 20)),
                   ),
                   Container(
                     width: 240,
                     // margin: const EdgeInsets.all(20.0),
                     padding: const EdgeInsets.all(10.0),
                     child: DropdownButton<String>(
-                      value: dropdownValue,
+                      value: dropdownValueTipo,
                       isExpanded: true,
                       icon: const Icon(Icons.arrow_downward),
                       iconSize: 24,
@@ -258,10 +184,10 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                       ),
                       onChanged: (String? newValue) {
                         setState(() {
-                          dropdownValue = newValue ?? 'Default';
+                          dropdownValueTipo = newValue ?? 'Default';
                         });
                       },
-                      items: <String>['Inocuidad', 'Calidad', 'Otros']
+                      items: Constants.itemsTipo
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -273,38 +199,131 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                       }).toList(),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: SizedBox(
-                      width: 600,
-                      child: TextField(
-                        controller: personalController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Personal a cargo resolución',
-                          labelText: 'Personal a cargo resolución',
-                        ),
-                      ),
+                ],
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 200,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: EditTextNormal(
+                          controller: embarqueController,
+                          labeltext: Constants.textoEmbarque,
+                          hintText: Constants.textoEmbarque),
                     ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: SizedBox(
+                      width: 400,
+                      child: EditTextNormal(
+                          controller: nombreClienteController,
+                          labeltext: Constants.textoCliente,
+                          hintText: Constants.textoCliente),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 400,
+                    child: EditTextNormal(
+                        controller: comercialController,
+                        labeltext: Constants.textoComercialCargo,
+                        hintText: Constants.textoComercialCargo),
                   ),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: SizedBox(
-                  width: 1000,
-                  child: TextField(
-                    controller: resolucionController,
-                    // enabled: widget.visita.estado == "0" ? true : false,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Resolución',
-                    ),
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
-                  ),
+              // crear campo de observaciones multilinea
+              SizedBox(
+                width: 1003,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 4.0, top: 20.0, bottom: 20.0),
+                  child: TextObservacion(
+                      controller: observacionMotivoController,
+                      labeltext: 'Observaciones Motivo'),
                 ),
               ),
+              const Divider(),
+              Visibility(
+                visible: myProvider.reclamoId != "" ? true : false,
+                child: const Padding(
+                  padding: EdgeInsets.only(bottom: 10.0),
+                  child: TextTitle(titlle: 'Datos de reclamo', fontSize: 26),
+                ),
+              ),
+              // Visibility(
+              //   visible: myProvider.reclamoId != "" ? true : false,
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: [
+              //       const Padding(
+              //         padding: EdgeInsets.all(8.0),
+              //         child: Text('Tipo de reclamo',
+              //             style: TextStyle(fontSize: 20)),
+              //       ),
+              //       Container(
+              //         width: 240,
+              //         // margin: const EdgeInsets.all(20.0),
+              //         padding: const EdgeInsets.all(10.0),
+              //         child: DropdownButton<String>(
+              //           value: dropdownValue,
+              //           isExpanded: true,
+              //           icon: const Icon(Icons.arrow_downward),
+              //           iconSize: 24,
+              //           elevation: 16,
+
+              //           //  style: const TextStyle(color: Colors.deepPurple),
+              //           underline: Container(
+              //             height: 3,
+              //             color: Theme.of(context).colorScheme.inversePrimary,
+              //           ),
+              //           onChanged: (String? newValue) {
+              //             setState(() {
+              //               dropdownValue = newValue ?? 'Default';
+              //             });
+              //           },
+              //           items: Constants.itemsTipoReclamo.map<DropdownMenuItem<String>>((String value) {
+              //             return DropdownMenuItem<String>(
+              //               value: value,
+              //               child: Padding(
+              //                 padding: const EdgeInsets.all(8.0),
+              //                 child: Text(value),
+              //               ),
+              //             );
+              //           }).toList(),
+              //         ),
+              //       ),
+              //       Padding(
+              //         padding: const EdgeInsets.all(20),
+              //         child: SizedBox(
+              //           width: 600,
+              //           child: TextField(
+              //             controller: personalController,
+              //             decoration: const InputDecoration(
+              //               border: OutlineInputBorder(),
+              //               hintText: 'Personal a cargo resolución',
+              //               labelText: 'Personal a cargo resolución',
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // Visibility(
+              //   visible: myProvider.reclamoId != "" ? true : false,
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(10.0),
+              //     child: SizedBox(
+              //       width: 1000,
+              //       child: TextObservacion(
+              //           controller: resolucionController,
+              //           labeltext: 'Resolución'),
+              //     ),
+              //   ),
+              // ),
 
               Padding(
                 padding: const EdgeInsets.only(top: 30.0, bottom: 30.0),
@@ -317,26 +336,23 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                         _selectedDate.value
                             .toString(), // Fecha de reclamo en formato de cadena
                         DateTime.now(), // Fecha de ingreso en formato de cadena
+                        dropdownValueTipo, // Tipo de reclamo
                         nombreClienteController.text, // Nombre de cliente
                         embarqueController.text, // N° de embarque
                         comercialController.text, // Comercial a cargo
-                        motivoController.text,
-                        dropdownValue, // Motivo
-                        personalController
-                            .text, // Personal a cargo de resolución
-                        resolucionController.text, // Resolución
+                        observacionMotivoController.text,
+                        "", // Motivo
+                        "", // Personal a cargo de resolución
+                        "", // Resolución
                         'En Proceso',
                       );
                       if (myProvider.reclamoId == "") {
                         myProvider.addReclamo(nuevoReclamo);
                       } else {
-                        myProvider.updateReclamo(
-                            myProvider.reclamoId,
-                            motivoController.text,
-                            resolucionController.text,
-                            'En Proceso');
+                        myProvider.updateReclamo(myProvider.reclamoId,
+                            observacionMotivoController.text, "", 'En Proceso');
                       }
-                     // myProvider.addReclamo(nuevoReclamo);
+                      // myProvider.addReclamo(nuevoReclamo);
                       String resp = myProvider.reclamoId == "0"
                           ? "Ocurrio un error"
                           : "Reclamo guardado correctamente";
@@ -368,3 +384,4 @@ class _AddReclamosPageState extends State<AddReclamosPage>
     );
   }
 }
+

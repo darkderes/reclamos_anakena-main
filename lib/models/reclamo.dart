@@ -4,10 +4,12 @@ class Reclamo {
   ObjectId? objectId;
   late String fechaReclamo;
   String fechaIngreso = DateTime.now().toString();
+  String tipo;
   String nombreCliente;
   String embarque;
   String comercial;
   String motivo;
+  String observacionMotivo = '';
   String tipoReclamo;
   String personal;
   String resolucion;
@@ -17,6 +19,7 @@ class Reclamo {
       this.objectId,
       this.fechaReclamo,
       fechaIngreso,
+      this.tipo,
       this.nombreCliente,
       this.embarque,
       this.comercial,
@@ -31,6 +34,7 @@ class Reclamo {
       '_id': objectId,
       'fechaReclamo': fechaReclamo,
       'fechaIngreso': fechaIngreso,
+      'tipo': tipo,
       'nombreCliente': nombreCliente,
       'embarque': embarque,
       'comercial': comercial,

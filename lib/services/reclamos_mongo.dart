@@ -35,6 +35,7 @@ Future<List<Reclamo>> obtenerReclamos() async {
       data['_id'],
       data['fechaReclamo'],
       data['fechaIngreso'],
+      data['tipo'],
       data['nombreCliente'],
       data['embarque'],
       data['comercial'],
