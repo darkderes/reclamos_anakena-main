@@ -1,4 +1,3 @@
-
 import '../barrels.dart';
 
 class TextObservacion extends StatelessWidget {

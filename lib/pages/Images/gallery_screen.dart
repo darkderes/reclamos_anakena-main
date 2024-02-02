@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reclamos_anakena/pages/Images/view_image.dart';
-import 'package:reclamos_anakena/services/imagenes_mongo.dart'; // Agrega esta importación
+import 'package:reclamos_anakena/services/Imagenes_service/imagenes_mongo.dart'; // Agrega esta importación
 
 
 class GaleryScreen extends StatefulWidget {

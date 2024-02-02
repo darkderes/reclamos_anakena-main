@@ -1,4 +1,11 @@
 import 'package:reclamos_anakena/barrels.dart';
+import 'package:reclamos_anakena/models/motivos_models/motivos.dart';
+import 'package:reclamos_anakena/models/productos_models/productos.dart';
+import 'package:reclamos_anakena/providers/provider_motivos.dart';
+import 'package:reclamos_anakena/providers/provider_producto.dart';
+
+import '../../services/motivos_service/motivos_mongo.dart';
+
 
 class AddReclamos extends StatefulWidget {
   const AddReclamos({super.key});
@@ -93,7 +100,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
   @override
   Widget build(BuildContext context) {
     var myProvider = Provider.of<Myprovider>(context);
-
+    var motivoIdSeleccionado;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -234,6 +241,61 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                   ),
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FutureBuilder<List<Motivos>>(
+                    future: obtenerMotivos(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<Motivos>> snapshot) {
+                      if (snapshot.hasData) {
+                        return DropdownButton<Motivos>(
+                          items: snapshot.data!.map((Motivos motivo) {
+                            return DropdownMenuItem<Motivos>(
+                              value: motivo,
+                              child: Text(motivo.motivo.toString()),
+                            );
+                          }).toList(),
+                          onChanged: (Motivos? nuevoMotivo) {
+                            setState(() {
+                              //_motivoSeleccionado = nuevoMotivo;
+                              motivoIdSeleccionado = nuevoMotivo!
+                                  .objectId; // Guardar el ObjectId del motivo seleccionado
+                            });
+                          },
+                          value: motivoIdSeleccionado == ''
+                              ? null
+                              : snapshot.data!.firstWhere((element) =>
+                                  element.objectId ==
+                                  motivoIdSeleccionado), // Buscar el motivo seleccionado por su ObjectId
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
+                    },
+                  ),
+                   Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _showProductoDialog();
+                      },
+                      child: const Text('Agregar producto'),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _showMotivoDialog();
+                      },
+                      child: const Text('Agregar motivo'),
+                    ),
+                  ),
+                ],
+              ),
               // crear campo de observaciones multilinea
               SizedBox(
                 width: 1003,
@@ -245,14 +307,14 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                       labeltext: 'Observaciones Motivo'),
                 ),
               ),
-              const Divider(),
-              Visibility(
-                visible: myProvider.reclamoId != "" ? true : false,
-                child: const Padding(
-                  padding: EdgeInsets.only(bottom: 10.0),
-                  child: TextTitle(titlle: 'Datos de reclamo', fontSize: 26),
-                ),
-              ),
+              // const Divider(),
+              // Visibility(
+              //   visible: myProvider.reclamoId != "" ? true : false,
+              //   child: const Padding(
+              //     padding: EdgeInsets.only(bottom: 10.0),
+              //     child: TextTitle(titlle: 'Datos de reclamo', fontSize: 26),
+              //   ),
+              // ),
               // Visibility(
               //   visible: myProvider.reclamoId != "" ? true : false,
               //   child: Row(
@@ -383,5 +445,85 @@ class _AddReclamosPageState extends State<AddReclamosPage>
       // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
-}
 
+  // crear dialogo para agregar motivo
+  void _showMotivoDialog() {
+    final TextEditingController motivoController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        var providerMotivo = Provider.of<ProviderMotivo>(context);
+        return AlertDialog(
+          title: const Text('Ingreso de motivos'),
+          content: TextField(
+            controller: motivoController,
+            decoration: const InputDecoration(
+              hintText: 'Escribe aquí tu motivo',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Aceptar'),
+              onPressed: () {
+                // Aquí puedes manejar el motivo ingresado por el usuario
+                String motivo = motivoController.text;
+                if (motivo != "") {
+                  var nuevoMotivo = Motivos(null, motivo);
+                  providerMotivo.addMotivo(nuevoMotivo);
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showProductoDialog() {
+    final TextEditingController productoController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        var providerProducto = Provider.of<ProductoProvider>(context);
+        return AlertDialog(
+          title: const Text('Ingreso de productos'),
+          content: TextField(
+            controller: productoController,
+            decoration: const InputDecoration(
+              hintText: 'Escribe aquí tu producto',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Aceptar'),
+              onPressed: () {
+                // Aquí puedes manejar el motivo ingresado por el usuario
+                String producto = productoController.text;
+                if (producto != "") {
+                  var nuevoProducto = Productos(null,producto);
+                  providerProducto.addProducto(nuevoProducto);
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}

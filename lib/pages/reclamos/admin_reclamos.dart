@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:fullscreen_window/fullscreen_window.dart';
 import 'package:provider/provider.dart';
 import 'package:win32/win32.dart';
-import '../services/provider_reclamos.dart';
+import '../../providers/provider_reclamos.dart';
 
 class AdminReclamos extends StatelessWidget {
   const AdminReclamos({super.key});

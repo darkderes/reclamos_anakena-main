@@ -1,4 +1,3 @@
-
 import '../barrels.dart';
 
 class EditTextNormal extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import 'package:reclamos_anakena/models/imagenes_reclamos.dart';
+import 'package:reclamos_anakena/models/images_models/imagenes_reclamos.dart';
 
 void insertarImagenesMongo(Imagenes imagenes) async {
   String env = dotenv.get('MONGODB_URI');

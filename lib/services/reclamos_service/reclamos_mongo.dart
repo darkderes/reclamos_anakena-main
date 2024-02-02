@@ -1,6 +1,6 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import 'package:reclamos_anakena/models/reclamo.dart';
+import 'package:reclamos_anakena/models/reclamos_models/reclamo.dart';
 
 Future<String> insertarReclamo(Reclamo reclamo) async {
   String env = dotenv.get('MONGODB_URI');
