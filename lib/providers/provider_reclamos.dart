@@ -22,8 +22,8 @@ class Myprovider with ChangeNotifier {
     notifyListeners();
     return reclamoId;
   }
-  Future<String> updateReclamo(String id,String motivo,String resolucion,String estado) async {
-    String res = await modificarReclamo(id, motivo,resolucion,estado);
+  Future<String> updateReclamo(String id,Reclamo reclamo) async {
+    String res = await modificarReclamos(id, reclamo);
     reclamos = await obtenerReclamos();
     notifyListeners();
     return res;

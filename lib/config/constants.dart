@@ -7,4 +7,8 @@ class Constants {
   static const List<String> itemsTipo = ['Reclamo', 'Comentario'];
   static const List<String> itemsTipoReclamo = ['Inocuidad','Calidad','Logistica','Otros'
   ];
+  static const String textoProducto = 'Producto';
+  static const String textoMotivo = 'Motivo';
+  static const String textoTipo = 'Tipo Reclamo';
+
 }

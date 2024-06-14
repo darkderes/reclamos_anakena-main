@@ -9,8 +9,10 @@ class Reclamo {
   String embarque;
   String comercial;
   String motivo;
+  String producto = '';
   String observacionMotivo = '';
   String tipoReclamo;
+  String otroTipo;
   String personal;
   String resolucion;
   String estado;
@@ -24,7 +26,10 @@ class Reclamo {
       this.embarque,
       this.comercial,
       this.motivo,
+      this.producto,
+      this.observacionMotivo,
       this.tipoReclamo,
+      this.otroTipo,
       this.personal,
       this.resolucion,
       this.estado);
@@ -39,7 +44,10 @@ class Reclamo {
       'embarque': embarque,
       'comercial': comercial,
       'motivo': motivo,
+      'producto': producto,
+      'observacionMotivo': observacionMotivo,
       'tipoReclamo': tipoReclamo,
+      'otroTipo': otroTipo,
       'personal': personal,
       'resolucion': resolucion,
       'estado': estado,

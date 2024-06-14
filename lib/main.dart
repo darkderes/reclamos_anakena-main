@@ -1,6 +1,4 @@
 import 'package:reclamos_anakena/barrels.dart';
-import 'package:reclamos_anakena/providers/provider_motivos.dart';
-import 'package:reclamos_anakena/providers/provider_producto.dart';
 
 void main() async {
   await dotenv.load(fileName: "assets/.env");
@@ -14,15 +12,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      ChangeNotifierProvider<ProviderMotivo>(
-        create: (context) => ProviderMotivo(),
-      ),
+   
       ChangeNotifierProvider<Myprovider>(
         create: (context) => Myprovider(),
       ),
-      ChangeNotifierProvider<ProductoProvider>(
-        create: (context) => ProductoProvider(),
-      ),
+    
       
     ],
       

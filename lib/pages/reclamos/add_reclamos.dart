@@ -1,11 +1,4 @@
 import 'package:reclamos_anakena/barrels.dart';
-import 'package:reclamos_anakena/models/motivos_models/motivos.dart';
-import 'package:reclamos_anakena/models/productos_models/productos.dart';
-import 'package:reclamos_anakena/providers/provider_motivos.dart';
-import 'package:reclamos_anakena/providers/provider_producto.dart';
-
-import '../../services/motivos_service/motivos_mongo.dart';
-
 
 class AddReclamos extends StatefulWidget {
   const AddReclamos({super.key});
@@ -39,9 +32,8 @@ class _AddReclamosPageState extends State<AddReclamosPage>
   TextEditingController comercialController = TextEditingController(text: '');
   TextEditingController observacionMotivoController =
       TextEditingController(text: '');
-  // TextEditingController personalController = TextEditingController(text: '');
-  // TextEditingController resolucionController = TextEditingController(text: '');
-  // String dropdownValue = 'Inocuidad';
+  TextEditingController motivoController = TextEditingController(text: '');
+  TextEditingController productoController = TextEditingController(text: '');
   String dropdownValueTipo = 'Reclamo';
 
   @override
@@ -100,7 +92,6 @@ class _AddReclamosPageState extends State<AddReclamosPage>
   @override
   Widget build(BuildContext context) {
     var myProvider = Provider.of<Myprovider>(context);
-    var motivoIdSeleccionado;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -241,61 +232,35 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                   ),
                 ],
               ),
+
+              const Divider(),
+              // crear campo de edittext normal con producto y otro de motivo
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  FutureBuilder<List<Motivos>>(
-                    future: obtenerMotivos(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<Motivos>> snapshot) {
-                      if (snapshot.hasData) {
-                        return DropdownButton<Motivos>(
-                          items: snapshot.data!.map((Motivos motivo) {
-                            return DropdownMenuItem<Motivos>(
-                              value: motivo,
-                              child: Text(motivo.motivo.toString()),
-                            );
-                          }).toList(),
-                          onChanged: (Motivos? nuevoMotivo) {
-                            setState(() {
-                              //_motivoSeleccionado = nuevoMotivo;
-                              motivoIdSeleccionado = nuevoMotivo!
-                                  .objectId; // Guardar el ObjectId del motivo seleccionado
-                            });
-                          },
-                          value: motivoIdSeleccionado == ''
-                              ? null
-                              : snapshot.data!.firstWhere((element) =>
-                                  element.objectId ==
-                                  motivoIdSeleccionado), // Buscar el motivo seleccionado por su ObjectId
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        return const CircularProgressIndicator();
-                      }
-                    },
-                  ),
-                   Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _showProductoDialog();
-                      },
-                      child: const Text('Agregar producto'),
+                  SizedBox(
+                    width: 400,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: EditTextNormal(
+                          controller: motivoController,
+                          labeltext: Constants.textoMotivo,
+                          hintText: Constants.textoMotivo),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _showMotivoDialog();
-                      },
-                      child: const Text('Agregar motivo'),
+                  SizedBox(
+                    width: 400,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: EditTextNormal(
+                          controller: productoController,
+                          labeltext: Constants.textoProducto,
+                          hintText: Constants.textoProducto),
                     ),
                   ),
                 ],
               ),
+              const Divider(),
               // crear campo de observaciones multilinea
               SizedBox(
                 width: 1003,
@@ -307,85 +272,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                       labeltext: 'Observaciones Motivo'),
                 ),
               ),
-              // const Divider(),
-              // Visibility(
-              //   visible: myProvider.reclamoId != "" ? true : false,
-              //   child: const Padding(
-              //     padding: EdgeInsets.only(bottom: 10.0),
-              //     child: TextTitle(titlle: 'Datos de reclamo', fontSize: 26),
-              //   ),
-              // ),
-              // Visibility(
-              //   visible: myProvider.reclamoId != "" ? true : false,
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     children: [
-              //       const Padding(
-              //         padding: EdgeInsets.all(8.0),
-              //         child: Text('Tipo de reclamo',
-              //             style: TextStyle(fontSize: 20)),
-              //       ),
-              //       Container(
-              //         width: 240,
-              //         // margin: const EdgeInsets.all(20.0),
-              //         padding: const EdgeInsets.all(10.0),
-              //         child: DropdownButton<String>(
-              //           value: dropdownValue,
-              //           isExpanded: true,
-              //           icon: const Icon(Icons.arrow_downward),
-              //           iconSize: 24,
-              //           elevation: 16,
 
-              //           //  style: const TextStyle(color: Colors.deepPurple),
-              //           underline: Container(
-              //             height: 3,
-              //             color: Theme.of(context).colorScheme.inversePrimary,
-              //           ),
-              //           onChanged: (String? newValue) {
-              //             setState(() {
-              //               dropdownValue = newValue ?? 'Default';
-              //             });
-              //           },
-              //           items: Constants.itemsTipoReclamo.map<DropdownMenuItem<String>>((String value) {
-              //             return DropdownMenuItem<String>(
-              //               value: value,
-              //               child: Padding(
-              //                 padding: const EdgeInsets.all(8.0),
-              //                 child: Text(value),
-              //               ),
-              //             );
-              //           }).toList(),
-              //         ),
-              //       ),
-              //       Padding(
-              //         padding: const EdgeInsets.all(20),
-              //         child: SizedBox(
-              //           width: 600,
-              //           child: TextField(
-              //             controller: personalController,
-              //             decoration: const InputDecoration(
-              //               border: OutlineInputBorder(),
-              //               hintText: 'Personal a cargo resolución',
-              //               labelText: 'Personal a cargo resolución',
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // Visibility(
-              //   visible: myProvider.reclamoId != "" ? true : false,
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(10.0),
-              //     child: SizedBox(
-              //       width: 1000,
-              //       child: TextObservacion(
-              //           controller: resolucionController,
-              //           labeltext: 'Resolución'),
-              //     ),
-              //   ),
-              // ),
 
               Padding(
                 padding: const EdgeInsets.only(top: 30.0, bottom: 30.0),
@@ -401,18 +288,21 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                         dropdownValueTipo, // Tipo de reclamo
                         nombreClienteController.text, // Nombre de cliente
                         embarqueController.text, // N° de embarque
-                        comercialController.text, // Comercial a cargo
+                        comercialController.text, 
+                        motivoController.text,
+                        productoController.text,
                         observacionMotivoController.text,
-                        "", // Motivo
+                        "", // Tipo de reclamo
+                        "", // Otro tipo
                         "", // Personal a cargo de resolución
                         "", // Resolución
-                        'En Proceso',
+                        'Creado',
                       );
                       if (myProvider.reclamoId == "") {
                         myProvider.addReclamo(nuevoReclamo);
                       } else {
                         myProvider.updateReclamo(myProvider.reclamoId,
-                            observacionMotivoController.text, "", 'En Proceso');
+                            nuevoReclamo);
                       }
                       // myProvider.addReclamo(nuevoReclamo);
                       String resp = myProvider.reclamoId == "0"
@@ -443,87 +333,6 @@ class _AddReclamosPageState extends State<AddReclamosPage>
         ),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-
-  // crear dialogo para agregar motivo
-  void _showMotivoDialog() {
-    final TextEditingController motivoController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        var providerMotivo = Provider.of<ProviderMotivo>(context);
-        return AlertDialog(
-          title: const Text('Ingreso de motivos'),
-          content: TextField(
-            controller: motivoController,
-            decoration: const InputDecoration(
-              hintText: 'Escribe aquí tu motivo',
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancelar'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Aceptar'),
-              onPressed: () {
-                // Aquí puedes manejar el motivo ingresado por el usuario
-                String motivo = motivoController.text;
-                if (motivo != "") {
-                  var nuevoMotivo = Motivos(null, motivo);
-                  providerMotivo.addMotivo(nuevoMotivo);
-                }
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showProductoDialog() {
-    final TextEditingController productoController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        var providerProducto = Provider.of<ProductoProvider>(context);
-        return AlertDialog(
-          title: const Text('Ingreso de productos'),
-          content: TextField(
-            controller: productoController,
-            decoration: const InputDecoration(
-              hintText: 'Escribe aquí tu producto',
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancelar'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Aceptar'),
-              onPressed: () {
-                // Aquí puedes manejar el motivo ingresado por el usuario
-                String producto = productoController.text;
-                if (producto != "") {
-                  var nuevoProducto = Productos(null,producto);
-                  providerProducto.addProducto(nuevoProducto);
-                }
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 }
