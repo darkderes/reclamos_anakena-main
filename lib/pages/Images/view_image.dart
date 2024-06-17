@@ -7,11 +7,10 @@ class ViewImage extends StatefulWidget {
   final VoidCallback refreshGallery;
 
   const ViewImage(
-      {Key? key,
+      {super.key,
       required this.url,
       required this.estado,
-      required this.refreshGallery})
-      : super(key: key);
+      required this.refreshGallery});
 
   @override
   // ignore: library_private_types_in_public_api

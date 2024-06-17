@@ -2,9 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fullscreen_window/fullscreen_window.dart';
-import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:reclamos_anakena/barrels.dart';
+import 'package:reclamos_anakena/utils/sent_mails.dart';
 import 'package:win32/win32.dart';
-import '../../providers/provider_reclamos.dart';
 
 class AdminReclamos extends StatelessWidget {
   const AdminReclamos({super.key});
@@ -15,6 +16,7 @@ class AdminReclamos extends StatelessWidget {
     return const MyHomePage(title: 'Administrar Reclamos');
   }
 }
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -48,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
               // salir de app
               if (Platform.isWindows) {
                 final hWnd = GetForegroundWindow();
-                ShowWindow(hWnd, SW_MINIMIZE);
+                ShowWindow(hWnd, SHOW_WINDOW_CMD.SW_MINIMIZE);
               }
               // SystemNavigator.pop();
             },
@@ -72,13 +74,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Center(
-                child: Image.asset(
-                  'assets/images/logoAnakena.png',
-                ), // Reemplaza 'assets/logo.png' con la ruta de tu imagen de logo
-              ),
+            const Padding(
+              padding: EdgeInsets.all(30.0),
+              child: LogoAnakena(),
             ),
             Consumer<Myprovider>(
               builder: (context, myProvider, child) {
@@ -86,10 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
-                }
-                
-                
-                 else {
+                } else {
                   return Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -99,13 +94,47 @@ class _MyHomePageState extends State<MyHomePage> {
                           var reclamo = myProvider.reclamos[index];
                           return Card(
                             child: ListTile(
-                              title: Text(reclamo.nombreCliente,
+                              title: Text(
+                                  "${reclamo.nombreCliente} - Comercial: ${reclamo.comercial}",
                                   style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold)),
                               subtitle: Text(
-                                  "N° Embarque: ${reclamo.embarque}  - Tipo Reclamo: ${reclamo.tipoReclamo}"),
-                              trailing: Text(reclamo.estado),
+                                  "N° Embarque: ${reclamo.embarque}  - Tipo : ${reclamo.tipo} - Producto: ${reclamo.producto}"),
+
+                              trailing: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                      "Fecha Reclamo ${DateFormat('dd-MM-yyyy').format(DateTime.parse(reclamo.fechaReclamo))}"),
+                                  Text(
+                                      "Fecha Ingreso  ${DateFormat('dd-MM-yyyy').format(DateTime.parse(reclamo.fechaReclamo))}"),
+                                  Text(
+                                    reclamo.estado,
+                                    style: reclamo.estado == "Creado"
+                                        ? const TextStyle(
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.bold)
+                                        : reclamo.estado == "Asignado"
+                                            ? const TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 139, 86, 6),
+                                                fontWeight: FontWeight.bold)
+                                            : const TextStyle(
+                                                color: Colors.red,
+                                                fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              // como puedo poner otro icono en el leading
+                              leading: reclamo.estado == "Creado"
+                                  ? const Icon(Icons.assignment)
+                                  : reclamo.estado == "Asignado"
+                                      ? const Icon(Icons.assignment_turned_in)
+                                      : const Icon(
+                                          Icons.assignment_turned_in_outlined),
+
                               onTap: () {
                                 Navigator.pushNamed(
                                     context, "/details_reclamos",

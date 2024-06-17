@@ -1,4 +1,5 @@
 import 'package:reclamos_anakena/barrels.dart';
+import 'package:reclamos_anakena/utils/sent_mails.dart';
 
 class AddReclamos extends StatefulWidget {
   const AddReclamos({super.key});
@@ -127,6 +128,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
           child: Column(
             // mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              // Reemplaza 'assets/logo.png' con la ruta de tu imagen de logo
               const Padding(
                 padding: EdgeInsets.all(30.0),
                 child: Center(
@@ -273,7 +275,6 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                 ),
               ),
 
-
               Padding(
                 padding: const EdgeInsets.only(top: 30.0, bottom: 30.0),
                 child: FloatingActionButton.extended(
@@ -288,7 +289,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                         dropdownValueTipo, // Tipo de reclamo
                         nombreClienteController.text, // Nombre de cliente
                         embarqueController.text, // N° de embarque
-                        comercialController.text, 
+                        comercialController.text,
                         motivoController.text,
                         productoController.text,
                         observacionMotivoController.text,
@@ -300,9 +301,11 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                       );
                       if (myProvider.reclamoId == "") {
                         myProvider.addReclamo(nuevoReclamo);
+                        sendEmail(
+                           nuevoReclamo);
                       } else {
-                        myProvider.updateReclamo(myProvider.reclamoId,
-                            nuevoReclamo);
+                        myProvider.updateReclamo(
+                            myProvider.reclamoId, nuevoReclamo);
                       }
                       // myProvider.addReclamo(nuevoReclamo);
                       String resp = myProvider.reclamoId == "0"

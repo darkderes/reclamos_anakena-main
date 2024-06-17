@@ -43,7 +43,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
           icon: const Icon(Icons.collections, color: Colors.white),
           onPressed: () {
             Navigator.pushNamed(context, "/galery_screen",
-                arguments: reclamo.objectId!.toHexString());
+                arguments: reclamo.objectId!.oid);
           },
         ),
         Padding(
@@ -60,7 +60,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                       var imagenes = Imagenes(
                         null,
                         urlImage,
-                        widget.reclamo.objectId!.toHexString(),
+                        widget.reclamo.objectId!.oid,
                       );
                       insertarImagenesMongo(imagenes);
                     }
@@ -78,15 +78,14 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
           child: Column(
+           
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(30.0),
-                child: Center(
-                  child: Image.asset(
-                      'assets/images/logoAnakena.png'), // Reemplaza 'assets/logo.png' con la ruta de tu imagen de logo
-                ),
+              
+              const Padding(
+                padding: EdgeInsets.all(30.0),
+                child: LogoAnakena(),
               ),
               const Padding(
                 padding: EdgeInsets.only(bottom: 20.0),
@@ -102,7 +101,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
-              Text("Tipo  ${reclamo.tipo!}      Producto: ${reclamo.producto}",
+              Text("Tipo  ${reclamo.tipo}      Producto: ${reclamo.producto}",
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
@@ -204,7 +203,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                         }).toList(),
                       ),
                     ),
-                  Text(reclamo.tipoReclamo!,
+                  Text(reclamo.tipoReclamo,
                       style: const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.bold)),
                   // crear edittext para ingresar otro tipo de reclamo
@@ -284,7 +283,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                       String resp =
                           await Provider.of<Myprovider>(context, listen: false)
                               .updateReclamo(
-                        reclamo.objectId!.toHexString(),
+                        reclamo.objectId!.oid,
                         Reclamo(
                           reclamo.objectId,
                           reclamo.fechaReclamo,

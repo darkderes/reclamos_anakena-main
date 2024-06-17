@@ -42,6 +42,8 @@ dependencies:
   mongo_dart: ^0.10.0
   provider: ^6.1.1
   win32: ^5.2.0
+  mailer: ^6.1.0
+
 
 dev_dependencies:
   flutter_lints: ^4.0.0

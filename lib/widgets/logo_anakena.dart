@@ -8,6 +8,6 @@ class LogoAnakena extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image.asset(
-        'assets/images/logoAnakena.png');
+        'assets/images/ANAKENA.png',width: 200,height: 50,fit: BoxFit.fill);
   }
 }

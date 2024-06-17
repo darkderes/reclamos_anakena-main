@@ -5,7 +5,7 @@ import 'package:reclamos_anakena/services/Imagenes_service/imagenes_mongo.dart';
 
 class GaleryScreen extends StatefulWidget {
   final String proceso;
-  const GaleryScreen({Key? key, required this.proceso}) : super(key: key);
+  const GaleryScreen({super.key, required this.proceso});
 
   @override
   State<GaleryScreen> createState() => _GaleryScreenState();

@@ -89,28 +89,3 @@ Future<String> modificarReclamos (String id, Reclamo reclamo) async {
     return 'Error al modificar reclamo';
   }
 }
-
-
-// Future<String> modificarReclamo(String id, String nuevoMotivo, String nuevaResolucion,String estado) async {
-//   var env = dotenv.get('MONGODB_URI');
-//   var db = await Db.create(env.toString());
-
-//   await db.open();
-
-//   var reclamosCollection = db.collection('reclamos');
-
-//   var result = await reclamosCollection.updateOne(
-//     where.eq('_id', ObjectId.parse(id)),
-//     modify.set('motivo', nuevoMotivo).set('resolucion', nuevaResolucion).set("estado", estado),
-//   );
-
-//   await db.close();
-
-
-//  if (result.ok == 1) {
-//     return 'Reclamo modificado';
-//   } else {
-//     return 'Error al modificar reclamo';
-//   }
-// }
-
