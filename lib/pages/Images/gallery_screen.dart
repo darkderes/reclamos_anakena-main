@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:reclamos_anakena/pages/Images/view_image.dart';
-import 'package:reclamos_anakena/services/Imagenes_service/imagenes_mongo.dart'; // Agrega esta importación
-
+import 'package:reclamos_anakena/barrels.dart';
 
 class GaleryScreen extends StatefulWidget {
   final String proceso;
@@ -18,51 +15,150 @@ class _GaleryScreenState extends State<GaleryScreen> {
       appBar: AppBar(
         title: const Text('Galeria de Imagenes'),
       ),
-      body: FutureBuilder<List<Widget>>(
-        future: _imagenesList(widget.proceso),
-        builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else if (snapshot.hasData) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GridView.extent(
-                maxCrossAxisExtent: 600,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-                children: snapshot.data!),
-            );
-            
-          } else {
-            return const Center(
-              child: Text('No hay imágenes disponibles.'),
-            );
-          }
-        },
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            FutureBuilder<List<Widget>>(
+              future: _imagenesList(widget.proceso, "Comercial"),
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                      // child: CircularProgressIndicator(),
+                      );
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (snapshot.hasData) {
+                  if (snapshot.data!.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.all(15.0),
+                      child: Center(
+                        child: Text('No hay imágenes disponibles area comercial.',style: TextStyle(fontWeight: FontWeight.bold),),
+                      ),
+                    );
+                  }
+                  return Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('Imagenes subidas Comercial', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color:Colors.brown),),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          height: 400, // Ajusta la altura según sea necesario
+                          child: GridView.extent(
+                            maxCrossAxisExtent: 600,
+                            crossAxisSpacing: 5,
+                            mainAxisSpacing: 5,
+                            children: snapshot.data!,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return const Center(
+                    child: Text('No hay imágenes disponibles.'),
+                  );
+                }
+              },
+            ),
+            FutureBuilder<List<Widget>>(
+              future: _imagenesList(widget.proceso, "Calidad"),
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (snapshot.hasData) {
+
+                  if (snapshot.data!.isEmpty) {
+                    return const Center(
+                      child: Text('No hay imágenes disponibles area calidad.',style: TextStyle(fontWeight: FontWeight.bold),),
+                    );
+                  }
+                  return Column(
+                    children:  [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('Imagenes subidas Calidad', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color:Colors.brown),),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          height: 400, // Ajusta la altura según sea necesario
+                          child: GridView.extent(
+                            maxCrossAxisExtent: 600,
+                            crossAxisSpacing: 5,
+                            mainAxisSpacing: 5,
+                            children: snapshot.data!,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return const Center(
+                    child: Text('No hay imágenes disponibles.'),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Future<List<Widget>>  _imagenesList(String proceso) async {
+  Future<List<Widget>> _imagenesList(String proceso, String section) async {
     List<Widget> lista = [];
 
-    List<String> imagenes = await traerUrlImagenesMongo(proceso);
+    List<Imagenes> imagenes = await traerUrlImagenesMongo(proceso);
+
+    // Filtrar imágenes por sección
+    if (section != "0") {
+      List<Imagenes> imagenesFiltradas = [];
+      for (var item in imagenes) {
+        if (item.seccion.contains(section)) {
+          imagenesFiltradas.add(item);
+        }
+      }
+      imagenes = imagenesFiltradas;
+    }
 
     for (var item in imagenes) {
       lista.add(
         GestureDetector(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ViewImage(url: item, estado: "0", refreshGallery: _refreshGallery,)));
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ViewImage(
+                  url: item.url,
+                  estado: "0",
+                  refreshGallery: _refreshGallery,
+                ),
+              ),
+            );
           },
-          child: Image.network(item, fit: BoxFit.cover,)));   
+          //Child(),
+          child:
+           Image.network(item.url, fit: BoxFit.cover),
+        ),
+      );
     }
     return lista;
   }
-    void _refreshGallery() {
+
+  void _refreshGallery() {
     // Refresh your image list here
     setState(() {});
   }

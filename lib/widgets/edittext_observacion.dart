@@ -18,6 +18,10 @@ class TextObservacion extends StatelessWidget {
         border: const OutlineInputBorder(),
         labelText: labeltext,
       ),
+      style: const TextStyle(
+        //fontSize: 15,
+        color: Colors.brown,
+      ),
       maxLines: null,
       keyboardType: TextInputType.multiline,
     );

@@ -1,7 +1,6 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import 'package:reclamos_anakena/models/images_models/imagenes_reclamos.dart';
+import 'package:reclamos_anakena/barrels.dart';
+
 
 void insertarImagenesMongo(Imagenes imagenes) async {
   String env = dotenv.get('MONGODB_URI');
@@ -17,8 +16,8 @@ void insertarImagenesMongo(Imagenes imagenes) async {
   }
 }
 
- Future<List<String>> traerUrlImagenesMongo(String idMongo) async {
-  List<String> lista = [];
+ Future<List<Imagenes>> traerUrlImagenesMongo(String idMongo) async {
+  List<Imagenes> lista = [];
   String env = dotenv.get('MONGODB_URI');
   var db = await Db.create(env);
   await db.open();
@@ -27,7 +26,7 @@ void insertarImagenesMongo(Imagenes imagenes) async {
   await db.close();
   if (result.isNotEmpty) {
     for (var item in result) {
-      lista.add(item['url']);
+      lista.add(Imagenes.fromMap(item));
     }
   }
   return lista;

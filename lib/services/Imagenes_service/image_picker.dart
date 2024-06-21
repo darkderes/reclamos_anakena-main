@@ -1,4 +1,4 @@
-import 'package:image_picker/image_picker.dart';
+import 'package:reclamos_anakena/barrels.dart';
 
 
 Future<List<XFile>> seleccionarImagen () async {

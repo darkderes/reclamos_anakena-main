@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:reclamos_anakena/services/Imagenes_service/imagenes_mongo.dart';
+import 'package:reclamos_anakena/barrels.dart';
 
 class ViewImage extends StatefulWidget {
   final String url;

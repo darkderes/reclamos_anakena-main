@@ -21,6 +21,11 @@ class EditTextNormal extends StatelessWidget {
         hintText: hintText,
         labelText: labeltext,
       ),
+      style: const TextStyle(
+        fontSize: 15,
+        color: Colors.brown,
+       
+      )
     );
   }
 }

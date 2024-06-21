@@ -1,10 +1,11 @@
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:reclamos_anakena/barrels.dart';
 
 
 Future<String?> uploadImage(String urlPath) async {
-  final url = Uri.parse('https://api.cloudinary.com/v1_1/dbj8eedny/upload');
+  final url = Uri.parse(dotenv.env['CLOUDINARY_API']!);
   final request = http.MultipartRequest('POST', url)
     ..fields['upload_preset'] = 'c0pxp5ct'
     ..files.add(await http.MultipartFile.fromPath('file', urlPath));

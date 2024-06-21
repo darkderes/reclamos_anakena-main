@@ -1,6 +1,5 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import 'package:reclamos_anakena/models/reclamos_models/reclamo.dart';
+import 'package:reclamos_anakena/barrels.dart';
 
 Future<String> insertarReclamo(Reclamo reclamo) async {
   String env = dotenv.get('MONGODB_URI');
@@ -84,7 +83,7 @@ Future<String> modificarReclamos (String id, Reclamo reclamo) async {
   await db.close();
 
   if (result.ok == 1) {
-    return 'Reclamo modificado';
+    return 'Reclamo actualizado correctamente';
   } else {
     return 'Error al modificar reclamo';
   }

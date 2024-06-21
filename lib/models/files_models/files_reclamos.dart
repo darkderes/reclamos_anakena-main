@@ -1,27 +1,32 @@
 import 'package:mongo_dart/mongo_dart.dart';
 
-class Imagenes {
+class Archivos {
   ObjectId? objectid;
   String seccion;
   String url;
+  String etiqueta;
   String idReclamo;
 
-  Imagenes(this.objectid,this.seccion, this.url, this.idReclamo);
+  Archivos(
+      this.objectid, this.seccion, this.url, this.etiqueta, this.idReclamo);
+
 
   Map<String, dynamic> toMap() {
     return {
       '_id': objectid,
       'seccion': seccion,
       'url': url,
+      'etiqueta': etiqueta,
       'idReclamo': idReclamo,
     };
   }
-  // crear fromMap
-  factory Imagenes.fromMap(Map<String, dynamic> map) {
-    return Imagenes(
+  // fromMap
+  factory Archivos.fromMap(Map<String, dynamic> map) {
+    return Archivos(
       map['_id'],
       map['seccion'],
       map['url'],
+      map['etiqueta'],
       map['idReclamo'],
     );
   }

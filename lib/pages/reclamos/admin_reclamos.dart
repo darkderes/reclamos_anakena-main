@@ -1,11 +1,6 @@
-import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fullscreen_window/fullscreen_window.dart';
-import 'package:intl/intl.dart';
+
 import 'package:reclamos_anakena/barrels.dart';
-import 'package:reclamos_anakena/utils/sent_mails.dart';
-import 'package:win32/win32.dart';
+import 'package:intl/intl.dart';
 
 class AdminReclamos extends StatelessWidget {
   const AdminReclamos({super.key});
@@ -13,12 +8,14 @@ class AdminReclamos extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MyHomePage(title: 'Administrar Reclamos');
+    return  MyHomePage(title: 'Administrar Reclamos');
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+   MyHomePage({super.key, required this.title});
+
+
 
   final String title;
 
@@ -27,10 +24,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+    TextEditingController searchController = TextEditingController();
+     bool isSearchEmpty = true;
   @override
   void initState() {
     super.initState();
     FullScreenWindow.setFullScreen(true);
+    searchController.addListener(() {
+      setState(() {
+        isSearchEmpty = searchController.text.isEmpty;
+      });
+      });
+  }
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -55,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
               // SystemNavigator.pop();
             },
           ),
+         // crear para 
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             tooltip: 'Cerrar App',
@@ -74,10 +84,37 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Padding(
+
+             const Padding(
               padding: EdgeInsets.all(30.0),
               child: LogoAnakena(),
             ),
+                         Padding(
+            padding: const EdgeInsets.only(left:30.0,right: 30.0,top: 16.0,bottom: 8),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                labelText: 'Buscar por N° embarque o Producto',
+                suffixIcon: searchController.text.isEmpty? const Icon(Icons.search) :  IconButton( onPressed:() {
+                searchController.clear();
+                setState(() {
+                  
+                });
+
+                },
+                icon: const Icon(Icons.clear),),
+              ),
+              onChanged: (value) {
+
+                
+                setState(() {
+                  
+                });
+                      
+              },
+            ),
+          ),
+           
             Consumer<Myprovider>(
               builder: (context, myProvider, child) {
                 if (myProvider.reclamos.isEmpty) {
@@ -85,13 +122,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: CircularProgressIndicator(),
                   );
                 } else {
+                  var filterReclamos = myProvider.reclamos
+                      .where((reclamo) =>
+                          reclamo.embarque
+                              .toLowerCase()
+                              .contains(searchController.text.toLowerCase()) ||
+                          reclamo.producto
+                              .toLowerCase()
+                              .contains(searchController.text.toLowerCase()))
+                      .toList();
                   return Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: ListView.builder(
-                        itemCount: myProvider.reclamos.length,
+                        itemCount: filterReclamos.length,
                         itemBuilder: (context, index) {
-                          var reclamo = myProvider.reclamos[index];
+                          var reclamo = filterReclamos[index];
                           return Card(
                             child: ListTile(
                               title: Text(

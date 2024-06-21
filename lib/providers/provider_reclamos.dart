@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
-import 'package:reclamos_anakena/services/reclamos_service/reclamos_mongo.dart';
-import '../models/reclamos_models/reclamo.dart';
+import 'package:reclamos_anakena/barrels.dart';
 
 class Myprovider with ChangeNotifier {
   List<Reclamo> reclamos = [];
