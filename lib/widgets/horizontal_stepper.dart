@@ -4,7 +4,7 @@ import '../barrels.dart';
 
 class HorizontalStepper extends StatelessWidget {
    final int currentStep;
-   HorizontalStepper({super.key,required this.currentStep});
+   const HorizontalStepper({super.key,required this.currentStep});
 
   @override
   Widget build(BuildContext context) {

@@ -42,7 +42,7 @@ class _GalleryFilesState extends State<GalleryFiles> {
         // Usar ListView.builder para mostrar los elementos de la lista
         return ListView.builder(
           shrinkWrap: true, // Importante para asegurar que se muestre dentro de un SingleChildScrollView
-          physics: NeverScrollableScrollPhysics(), // Para evitar el desplazamiento dentro del ListView
+          physics: const NeverScrollableScrollPhysics(), // Para evitar el desplazamiento dentro del ListView
           itemCount: snapshot.data!.length,
           itemBuilder: (context, index) {
             return snapshot.data![index];

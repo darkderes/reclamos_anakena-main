@@ -173,7 +173,7 @@ class _LoginState extends State<Login> {
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return DialogCustom(
+                                    return const DialogCustom(
                                       title: 'Error',
                                       resp: 'No se pudo iniciar sesión',
                                     );

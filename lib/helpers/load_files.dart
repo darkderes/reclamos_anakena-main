@@ -43,7 +43,7 @@ class _LoadFilesState extends State<LoadFiles> {
                 labelText = value;
               });
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Etiqueta',
               hintText: 'Ingresa una etiqueta',
             ),

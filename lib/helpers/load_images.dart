@@ -84,7 +84,7 @@ class _LoadImagesState extends State<LoadImages> {
         }
       }
     } catch (e) {
-      print("Error: $e");
+      debugPrint("Error: $e");
     } finally {
       Navigator.of(context).pop();
     }
