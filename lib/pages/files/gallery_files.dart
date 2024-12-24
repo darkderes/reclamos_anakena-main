@@ -87,26 +87,6 @@ class _GalleryFilesState extends State<GalleryFiles> {
                InkWell(
               onTap: () async {
                 
-    //               String url = item.url; // La URL desde donde descargar el archivo
-    // Dio dio = Dio();
-
-    // try {
-    //   // Obtener el directorio de documentos del dispositivo
-    //   Directory directorio = await getApplicationDocumentsDirectory();
-    //   String ruta = '${directorio.path}/${url.split('/').last}';
-
-    //   // Descargar el archivo
-    //   await dio.download(url, ruta);
-
-    //   // Mostrar un mensaje de éxito (opcional)
-    //   print('Archivo descargado y guardado en $ruta');
-    // } catch (e) {
-    //   print('Error al descargar el archivo: $e');
-    // }
-
-                // necesito que al presionar el boton descargar se descargue el archivo
-
-
                launchUrl(Uri.parse(item.url));
               },
               child: const Padding(

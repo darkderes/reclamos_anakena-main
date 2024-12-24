@@ -1,5 +1,4 @@
-// creame una pantalla de inicio de sesión con un formulario de inicio de sesión con 2 cuadro de texto de mail y password
-// y un botón de inicio de sesión
+
 import 'package:reclamos_anakena/barrels.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -155,19 +154,19 @@ class _LoginState extends State<Login> {
                             final supabase = Supabase.instance.client;
 
                             try {
-                              // final AuthResponse res =
-                              //     await supabase.auth.signInWithPassword(
-                              //   password: _passwordController.text,
-                              //   email: _emailController.text,
-                              // );
+                              final AuthResponse res =
+                                  await supabase.auth.signInWithPassword(
+                                password: _passwordController.text,
+                                email: _emailController.text,
+                              );
 
-                              // final Session? session = res.session;
-                              // final User? user = res.user;
+                              final Session? session = res.session;
+                              final User? user = res.user;
 
-                              // if (session != null && user != null) {
-                                // debugPrint('User: ${user.email}');
-                                // debugPrint('Session: ${session.accessToken}');
-                              if (true) {
+                              if (session != null && user != null) {
+                                debugPrint('User: ${user.email}');
+                                debugPrint('Session: ${session.accessToken}');
+                           
                                 Navigator.pushReplacementNamed(
                                     context, '/home');
                               } else {
