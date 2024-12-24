@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "AnakenaReclamos"
-#define MyAppVersion "1.5"
+#define MyAppVersion "1.0"
 #define MyAppPublisher "Anakena "
 #define MyAppURL "www.anakena.cl"
 #define MyAppExeName "reclamos_anakena.exe"
@@ -32,7 +32,7 @@ DisableProgramGroupPage=yes
 ;PrivilegesRequired=lowest
 OutputDir=C:\Users\JDARD\OneDrive\Escritorio\reclamos_anakena-main\installers
 OutputBaseFilename=anakena_reclamos
-SetupIconFile=C:\Users\JDARD\OneDrive\Escritorio\COMERCIAL.ico
+;SetupIconFile=C:\Users\JDARD\OneDrive\Escritorio\COMERCIAL.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
