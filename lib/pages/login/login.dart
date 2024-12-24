@@ -155,18 +155,19 @@ class _LoginState extends State<Login> {
                             final supabase = Supabase.instance.client;
 
                             try {
-                              final AuthResponse res =
-                                  await supabase.auth.signInWithPassword(
-                                password: _passwordController.text,
-                                email: _emailController.text,
-                              );
+                              // final AuthResponse res =
+                              //     await supabase.auth.signInWithPassword(
+                              //   password: _passwordController.text,
+                              //   email: _emailController.text,
+                              // );
 
-                              final Session? session = res.session;
-                              final User? user = res.user;
+                              // final Session? session = res.session;
+                              // final User? user = res.user;
 
-                              if (session != null && user != null) {
-                                debugPrint('User: ${user.email}');
-                                debugPrint('Session: ${session.accessToken}');
+                              // if (session != null && user != null) {
+                                // debugPrint('User: ${user.email}');
+                                // debugPrint('Session: ${session.accessToken}');
+                              if (true) {
                                 Navigator.pushReplacementNamed(
                                     context, '/home');
                               } else {
