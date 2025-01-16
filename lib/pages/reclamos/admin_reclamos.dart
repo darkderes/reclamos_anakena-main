@@ -1,6 +1,7 @@
 import 'package:reclamos_anakena/barrels.dart';
 import 'package:intl/intl.dart';
 
+
 class AdminReclamos extends StatelessWidget {
   const AdminReclamos({super.key});
 
@@ -45,27 +46,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.minimize),
-            tooltip: 'Minimizar',
-            onPressed: () async {
-              if (Platform.isWindows) {
-                final hWnd = GetForegroundWindow();
-                ShowWindow(hWnd, SHOW_WINDOW_CMD.SW_MINIMIZE);
-              }
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            tooltip: 'Cerrar App',
-            onPressed: () {
-              if (Platform.isWindows) {
-                ExitProcess(0);
-              }
-              SystemNavigator.pop();
-            },
-          ),
+        actions: const <Widget>[
+          IconMinimizar(),
+          IconCerrar()
         ],
       ),
       body: Center(

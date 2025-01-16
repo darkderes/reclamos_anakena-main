@@ -379,6 +379,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                               "", // Otro tipo
                               "", // Personal a cargo de resolución
                               "", // Resolución
+                              "", // Resolución comercial
                               'Creado',
                             );
                             if (myProvider.reclamoId == "") {

@@ -1,6 +1,4 @@
-
 import 'package:reclamos_anakena/barrels.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -8,15 +6,12 @@ class Login extends StatefulWidget {
   @override
   State<Login> createState() => _LoginState();
 }
-
 class _LoginState extends State<Login> {
+
   final _formKey = GlobalKey<FormState>();
-
   final _emailController = TextEditingController();
-
   final _passwordController = TextEditingController();
 
-  bool _isPasswordHidden = true;
 
   @override
   void initState() {
@@ -35,38 +30,15 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     FullScreenWindow.setFullScreen(true);
     setState(() {});
-    // tamaño de la pantalla con mediaquery
-    // para centrar el formulario
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inicio de sesión'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.minimize),
-            tooltip: 'Minimizar',
-            onPressed: () async {
-              // salir de app
-              if (Platform.isWindows) {
-                final hWnd = GetForegroundWindow();
-                ShowWindow(hWnd, SHOW_WINDOW_CMD.SW_MINIMIZE);
-              }
-              // SystemNavigator.pop();
-            },
-          ),
-          // crear para
-          IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            tooltip: 'Cerrar App',
-            onPressed: () {
-              // salir de app
-              if (Platform.isWindows) {
-                ExitProcess(0);
-              }
-              SystemNavigator.pop();
-            },
-          ),
+        actions: const <Widget>[
+          IconMinimizar(),
+          IconCerrar(),
         ],
       ),
       body: Center(
@@ -98,103 +70,11 @@ class _LoginState extends State<Login> {
                     children: [
                       const LogoAnakena(),
                       const SizedBox(height: 30),
-                      TextFormField(
-                        controller: _emailController,
-                        maxLength: 25,
-                        style: const TextStyle(
-                          letterSpacing: 2,
-                          color: Colors.brown,
-                          fontSize: 18,
-                        ),
-                        decoration: const InputDecoration(
-                          labelText: 'Correo electrónico',
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty || !value.contains('@')) {
-                            return 'Por favor ingrese su correo electrónico';
-                          }
-                          return null;
-                        },
-                      ),
+                      TxtCorreo(emailController: _emailController),
                       const SizedBox(height: 20),
-                      TextFormField(
-                        controller: _passwordController,
-                        maxLength: 10,
-                        obscureText: _isPasswordHidden,
-                        style: const TextStyle(
-                            letterSpacing: 2, color: Colors.brown),
-                        decoration: InputDecoration(
-                          labelText: 'Contraseña',
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              // Cambia el ícono dependiendo del estado de _isPasswordHidden
-                              _isPasswordHidden
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                // Cambia el estado de visibilidad de la contraseña
-                                _isPasswordHidden = !_isPasswordHidden;
-                              });
-                            },
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Por favor ingrese su contraseña';
-                          }
-                          return null;
-                        },
-                      ),
+                      TxtPassword(controller: _passwordController),
                       const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            final supabase = Supabase.instance.client;
-
-                            try {
-                              final AuthResponse res =
-                                  await supabase.auth.signInWithPassword(
-                                password: _passwordController.text,
-                                email: _emailController.text,
-                              );
-
-                              final Session? session = res.session;
-                              final User? user = res.user;
-
-                              if (session != null && user != null) {
-                                debugPrint('User: ${user.email}');
-                                debugPrint('Session: ${session.accessToken}');
-                           
-                                Navigator.pushReplacementNamed(
-                                    context, '/home');
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return const DialogCustom(
-                                      title: 'Error',
-                                      resp: 'No se pudo iniciar sesión',
-                                    );
-                                  },
-                                );
-                              }
-                            } catch (e) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return DialogCustom(
-                                    title: 'Error',
-                                    resp: e.toString(),
-                                  );
-                                },
-                              );
-                            }
-                          }
-                        },
-                        child: const Text('Iniciar sesión'),
-                      ),
+                      ButtonLogin(formKey: _formKey, emailController: _emailController, passwordController: _passwordController),
                     ],
                   ),
                 ),
@@ -206,3 +86,4 @@ class _LoginState extends State<Login> {
     );
   }
 }
+

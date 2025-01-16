@@ -15,6 +15,7 @@ class Reclamo {
   String otroTipo;
   String personal;
   String resolucion;
+  String resolucionComercial;
   String estado;
 
   Reclamo(
@@ -32,6 +33,7 @@ class Reclamo {
       this.otroTipo,
       this.personal,
       this.resolucion,
+      this.resolucionComercial,
       this.estado);
 
   Map<String, dynamic> toMap() {
@@ -50,6 +52,7 @@ class Reclamo {
       'otroTipo': otroTipo,
       'personal': personal,
       'resolucion': resolucion,
+      'resolucionComercial': resolucionComercial ?? '',
       'estado': estado,
     };
   }

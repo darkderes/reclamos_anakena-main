@@ -18,6 +18,8 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
   TextEditingController personalController = TextEditingController(text: '');
   TextEditingController otroTipoController = TextEditingController(text: '');
   TextEditingController resolucionController = TextEditingController(text: '');
+  TextEditingController resolucionComercialController =
+      TextEditingController(text: '');
   String dropdownValueTipoReclamo = 'Inocuidad';
   int currentStep = 0;
   late Reclamo reclamo;
@@ -36,6 +38,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
     motivoObservacionController.text = reclamo.observacionMotivo;
     otroTipoController.text = reclamo.otroTipo;
     resolucionController.text = reclamo.resolucion;
+    resolucionComercialController.text = reclamo.resolucionComercial;
     currentStep = reclamo.estado == "Creado"
         ? 2
         : reclamo.estado == "Asignado"
@@ -73,6 +76,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
               const SizedBox(height: 10),
               const Divider(),
               seccionCalidad(context, reclamo),
+            
               reclamo.estado == "Asignado" || reclamo.estado == "Finalizado"
                   ? SizedBox(
                       width: MediaQuery.of(context).size.width / 2,
@@ -84,6 +88,19 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                       ),
                     )
                   : const SizedBox(),
+
+                reclamo.estado == "Asignado" || reclamo.estado == "Finalizado"
+                  ? SizedBox(
+                      width: MediaQuery.of(context).size.width / 2,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                        child: SeccionResolucionComercial(
+                            resolucionComercialControler: resolucionComercialController,
+                      reclamo: reclamo),
+                      ),
+                    )
+                  : const SizedBox(),
+             
               if (reclamo.estado != "Finalizado")
                 Padding(
                   padding: const EdgeInsets.only(top: 30.0, bottom: 30.0),
@@ -110,6 +127,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                             otroTipoController.text,
                             personalController.text,
                             resolucionController.text,
+                            resolucionComercialController.text,
                             reclamo.estado == "Creado"
                                 ? 'Asignado'
                                 : 'Finalizado',
@@ -365,6 +383,66 @@ class SeccionResolucion extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             child: TextField(
               controller: resolucionController,
+              readOnly: reclamo.estado == "Finalizado" ? true : false,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Resolución',
+              ),
+              style: const TextStyle(
+               // fontSize: 15,
+                color: Colors.brown,
+              ),
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class SeccionResolucionComercial extends StatelessWidget {
+  const SeccionResolucionComercial({
+    super.key,
+    required this.resolucionComercialControler,
+    required this.reclamo,
+  });
+
+  final TextEditingController resolucionComercialControler;
+  final Reclamo reclamo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 5,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+         
+          const Padding(
+            padding: EdgeInsets.only(top: 20.0),
+            child: Text('Datos Resolución Comercial',
+                style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.brown)),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: TextField(
+              controller: resolucionComercialControler,
               readOnly: reclamo.estado == "Finalizado" ? true : false,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),

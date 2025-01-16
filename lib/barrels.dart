@@ -37,4 +37,10 @@ export 'package:reclamos_anakena/helpers/load_files.dart';
 export 'package:reclamos_anakena/widgets/dialog_custom.dart';
 export 'package:reclamos_anakena/pages/files/gallery_files.dart';
 export 'package:cached_network_image/cached_network_image.dart';
+export 'package:reclamos_anakena/services/login_services/login_services.dart';
+export 'package:reclamos_anakena/widgets/icon_cerrar.dart';
+export 'package:reclamos_anakena/widgets/icon_minizar.dart';
+export 'package:reclamos_anakena/pages/login/widgets/btn_login.dart';
+export 'package:reclamos_anakena/pages/login/widgets/txt_correo.dart';
+export 'package:reclamos_anakena/pages/login/widgets/txt_password.dart';
 

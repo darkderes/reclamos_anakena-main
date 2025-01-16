@@ -45,6 +45,7 @@ Future<List<Reclamo>> obtenerReclamos() async {
       data['otroTipo'],
       data['personal'],
       data['resolucion'],
+      data['resolucionComercial'] ?? '',
       data['estado'],
     );
   }).toList();
@@ -77,6 +78,7 @@ Future<String> modificarReclamos (String id, Reclamo reclamo) async {
         .set('otroTipo', reclamo.otroTipo)
         .set('personal', reclamo.personal)
         .set('resolucion', reclamo.resolucion)
+        .set('resolucionComercial', reclamo.resolucionComercial)
         .set('estado', reclamo.estado),
   );
 
