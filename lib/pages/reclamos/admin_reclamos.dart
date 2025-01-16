@@ -1,6 +1,6 @@
 import 'package:reclamos_anakena/barrels.dart';
 import 'package:intl/intl.dart';
-
+import 'package:reclamos_anakena/widgets/icon_user.dart';
 
 class AdminReclamos extends StatelessWidget {
   const AdminReclamos({super.key});
@@ -46,10 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        actions: const <Widget>[
-          IconMinimizar(),
-          IconCerrar()
-        ],
+        actions:  <Widget>[UserData(), const IconMinimizar(), const IconCerrar()],
       ),
       body: Center(
         child: Column(
@@ -68,8 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 } else {
                   var filterReclamos = myProvider.reclamos
                       .where((reclamo) =>
-                          reclamo.embarque.toLowerCase().contains(
-                              searchController.text.toLowerCase()) ||
+                          reclamo.embarque
+                              .toLowerCase()
+                              .contains(searchController.text.toLowerCase()) ||
                           reclamo.producto
                               .toLowerCase()
                               .contains(searchController.text.toLowerCase()))
@@ -130,15 +128,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     fontWeight: FontWeight.bold)
                                                 : const TextStyle(
                                                     color: Colors.red,
-                                                    fontWeight: FontWeight.bold),
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                       ),
                                     ],
                                   ),
                                   leading: reclamo.estado == "Creado"
                                       ? const Icon(Icons.assignment)
                                       : reclamo.estado == "Asignado"
-                                          ? const Icon(Icons.assignment_turned_in)
-                                          : const Icon(Icons.assignment_turned_in_outlined),
+                                          ? const Icon(
+                                              Icons.assignment_turned_in)
+                                          : const Icon(Icons
+                                              .assignment_turned_in_outlined),
                                   onTap: () {
                                     Navigator.pushNamed(
                                         context, "/details_reclamos",
@@ -168,3 +169,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+

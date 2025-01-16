@@ -67,13 +67,11 @@ class _LoginState extends State<Login> {
                   key: _formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 20,
                     children: [
                       const LogoAnakena(),
-                      const SizedBox(height: 30),
                       TxtCorreo(emailController: _emailController),
-                      const SizedBox(height: 20),
                       TxtPassword(controller: _passwordController),
-                      const SizedBox(height: 20),
                       ButtonLogin(formKey: _formKey, emailController: _emailController, passwordController: _passwordController),
                     ],
                   ),
@@ -86,4 +84,3 @@ class _LoginState extends State<Login> {
     );
   }
 }
-
