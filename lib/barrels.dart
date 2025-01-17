@@ -46,4 +46,6 @@ export 'package:reclamos_anakena/pages/login/widgets/txt_password.dart';
 export 'package:reclamos_anakena/pages/login/login.dart';
 export 'package:supabase_flutter/supabase_flutter.dart';
 export 'package:shared_preferences/shared_preferences.dart';
+export 'package:reclamos_anakena/widgets/icon_user.dart';
+export 'package:reclamos_anakena/pages/reclamos/widgets/lista_reclamos.dart';
 

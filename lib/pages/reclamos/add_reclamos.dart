@@ -1,4 +1,6 @@
 import 'package:reclamos_anakena/barrels.dart';
+import 'package:reclamos_anakena/pages/reclamos/widgets/app_bar_reclamos.dart';
+import 'package:reclamos_anakena/pages/reclamos/actions/ingreso_reclamos.dart';
 import 'package:reclamos_anakena/widgets/horizontal_stepper.dart';
 
 class AddReclamos extends StatefulWidget {
@@ -37,6 +39,29 @@ class _AddReclamosPageState extends State<AddReclamosPage>
   TextEditingController productoController = TextEditingController(text: '');
   String dropdownValueTipo = 'Reclamo';
   int _currentStep = 1;
+  bool _isButtonDisabled = false;
+
+    Reclamo crearReclamo() {
+    return Reclamo(
+      null,
+      _selectedDate.value.toString(), // Fecha de reclamo en formato de cadena
+      DateTime.now(), // Fecha de ingreso en formato de cadena
+      dropdownValueTipo, // Tipo de reclamo
+      nombreClienteController.text, // Nombre de cliente
+      embarqueController.text, // N° de embarque
+      comercialController.text,
+      motivoController.text,
+      productoController.text,
+      observacionMotivoController.text,
+      "", // Tipo de reclamo
+      "", // Otro tipo
+      "", // Personal a cargo de resolución
+      "", // Resolución
+      "", // Resolución comercial
+      'Creado',
+    );
+  }
+
 
   @override
   String? get restorationId => "add_reclamos_page";
@@ -97,75 +122,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        actions: [
-          Visibility(
-            visible: _currentStep == 2 ? true : false,
-            child: IconButton(
-              icon: const Icon(Icons.all_inbox_rounded, color: Colors.white),
-              onPressed: () {
-                Navigator.pushNamed(context, "/galery_files",
-                    arguments: myProvider.reclamoId);
-              },
-            ),
-          ),
-          Visibility(
-            visible: _currentStep == 2 ? true : false,
-            child: IconButton(
-              icon: const Icon(Icons.cloud_download_sharp, color: Colors.white),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Dialog(
-                      child: SizedBox(
-                        // Puedes ajustar el tamaño del contenedor según tus necesidades
-                        width: 500,
-                        height: 300,
-                        child: LoadFiles(id: myProvider.reclamoId),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-          Visibility(
-            visible: _currentStep == 2 ? true : false,
-            child: IconButton(
-              icon: const Icon(Icons.collections, color: Colors.white),
-              onPressed: () {
-                Navigator.pushNamed(context, "/galery_screen",
-                    arguments: myProvider.reclamoId);
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: Visibility(
-              visible: _currentStep == 2 ? true : false,
-              child: IconButton(
-                  onPressed: () async {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Dialog(
-                          child: SizedBox(
-                            // Puedes ajustar el tamaño del contenedor según tus necesidades
-                            width: 500,
-                            height: 300,
-                            child: LoadImages(id: myProvider.reclamoId),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.add_a_photo_sharp)),
-            ),
-          )
-        ],
-      ),
+      appBar: AppBarAdd(widget: widget, currentStep: _currentStep, myProvider: myProvider),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -359,62 +316,24 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                     Padding(
                       padding: const EdgeInsets.only(top: 30.0, bottom: 30.0),
                       child: FloatingActionButton.extended(
-                          onPressed: () {
-                            var nuevoReclamo = Reclamo(
-                              null,
-
-                              // Id del reclamo
-                              _selectedDate.value
-                                  .toString(), // Fecha de reclamo en formato de cadena
-                              DateTime
-                                  .now(), // Fecha de ingreso en formato de cadena
-                              dropdownValueTipo, // Tipo de reclamo
-                              nombreClienteController.text, // Nombre de cliente
-                              embarqueController.text, // N° de embarque
-                              comercialController.text,
-                              motivoController.text,
-                              productoController.text,
-                              observacionMotivoController.text,
-                              "", // Tipo de reclamo
-                              "", // Otro tipo
-                              "", // Personal a cargo de resolución
-                              "", // Resolución
-                              "", // Resolución comercial
-                              'Creado',
-                            );
-                            if (myProvider.reclamoId == "") {
-                              myProvider.addReclamo(nuevoReclamo);
-                              sendEmail(nuevoReclamo);
-                            } else {
-                              myProvider.updateReclamo(
-                                  myProvider.reclamoId, nuevoReclamo);
-                            }
-                            // myProvider.addReclamo(nuevoReclamo);
-                            String resp = myProvider.reclamoId == "0"
-                                ? "Ocurrio un error"
-                                : "Reclamo guardado correctamente";
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text(resp),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Aceptar'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                            setState(() {
-                              _currentStep = resp == "Ocurrio un error" ? 1 : 2;
-                            });
-                          },
-                          icon: const Icon(Icons.save),
-                          label: const Text('Ingreso de reclamo')),
+                        onPressed: _isButtonDisabled
+                            ? null
+                            : () async  {
+                         Reclamo nuevoReclamo = crearReclamo();
+                        String resp = await handleReclamoLogic(context,myProvider, nuevoReclamo);
+                         setState(() {
+                           if (resp == "Ocurrio un error") {
+                             _currentStep = 1;
+                             
+                           } else {
+                             _currentStep = 2;
+                              _isButtonDisabled = true;                        
+                           }
+                         });
+                        },
+                        icon: const Icon(Icons.save),
+                        label: const Text('Ingreso de reclamo'),
+                      ),
                     ),
                   ],
                 ),
