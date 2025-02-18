@@ -8,6 +8,7 @@ class AdminReclamos extends StatelessWidget {
     return const MyHomePage(title: 'Administrar Reclamos');
   }
 }
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -15,9 +16,11 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
+
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController searchController = TextEditingController();
   bool isSearchEmpty = true;
+  String? userRole;
 
   @override
   void initState() {
@@ -28,6 +31,12 @@ class _MyHomePageState extends State<MyHomePage> {
         isSearchEmpty = searchController.text.isEmpty;
       });
     });
+    _loadUserRole();
+  }
+
+  Future<void> _loadUserRole() async {
+    userRole = await getUserRole();
+    setState(() {});
   }
 
   @override
@@ -40,8 +49,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(widget.title),
-        actions:  const <Widget>[UserData(), IconMinimizar(), IconCerrar()],
+        actions: const <Widget>[UserData(), IconMinimizar(), IconCerrar()],
       ),
       body: Center(
         child: Column(
@@ -57,7 +67,19 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, "/add_reclamos");
+          if (userRole == 'Comercial') {
+            Navigator.pushNamed(context, "/add_reclamos");
+          } else {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return const DialogCustom(
+                  title: 'Permiso denegado',
+                  resp: 'No tienes permisos para agregar reclamos',
+                );
+              },
+            );
+          }
         },
         tooltip: 'Agregar Reclamo',
         child: const Icon(Icons.add),

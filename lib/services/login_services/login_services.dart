@@ -67,3 +67,13 @@ Future<void> signOut(BuildContext context) async {
   await prefs.clear();
   Navigator.pushReplacementNamed(context, '/');
 }
+
+Future<String?> getUserRole() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('rol');
+}
+
+Future<String?> getUserName() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('nombre');
+}

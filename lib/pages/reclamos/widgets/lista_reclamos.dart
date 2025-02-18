@@ -13,11 +13,19 @@ class ListaReclamos extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<Myprovider>(
       builder: (context, myProvider, child) {
-        if (myProvider.reclamos.isEmpty) {
+        if (myProvider.isLoading) {
           return const Center(
             child: CircularProgressIndicator(),
           );
-        } else {
+        } 
+
+        else if (myProvider.reclamos.isEmpty) {
+          return const Center(
+            child: Text('No hay elementos en la base de datos'),
+          );
+        }
+        
+          else {
           var filterReclamos = myProvider.reclamos
               .where((reclamo) =>
                   reclamo.embarque

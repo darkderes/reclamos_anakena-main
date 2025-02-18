@@ -35,6 +35,7 @@ class _LoginState extends State<Login> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false, 
         title: const Text('Inicio de sesión'),
         actions: const <Widget>[
           IconMinimizar(),

@@ -1,4 +1,3 @@
-
 import 'package:intl/intl.dart';
 import 'package:reclamos_anakena/barrels.dart';
 import 'package:reclamos_anakena/widgets/horizontal_stepper.dart';
@@ -23,6 +22,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
   String dropdownValueTipoReclamo = 'Inocuidad';
   int currentStep = 0;
   late Reclamo reclamo;
+  String? userRole;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
     motivoObservacionController = TextEditingController();
     personalController = TextEditingController();
     otroTipoController = TextEditingController();
-    resolucionController = TextEditingController();  
+    resolucionController = TextEditingController();
     reclamo = widget.reclamo;
     motivoController.text = reclamo.motivo;
     personalController.text = reclamo.personal;
@@ -44,6 +44,12 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
         : reclamo.estado == "Asignado"
             ? 3
             : 4;
+    _loadUserRole();
+  }
+
+  Future<void> _loadUserRole() async {
+    userRole = await getUserRole();
+    setState(() {});
   }
 
   @override
@@ -76,36 +82,72 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
               const SizedBox(height: 10),
               const Divider(),
               seccionCalidad(context, reclamo),
-            
-              reclamo.estado == "Asignado" || reclamo.estado == "Finalizado"
-                  ? SizedBox(
-                      width: MediaQuery.of(context).size.width / 2,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-                        child: SeccionResolucion(
-                            resolucionController: resolucionController,
-                            reclamo: reclamo),
-                      ),
-                    )
-                  : const SizedBox(),
-
-                reclamo.estado == "Asignado" || reclamo.estado == "Finalizado"
-                  ? SizedBox(
-                      width: MediaQuery.of(context).size.width / 2,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-                        child: SeccionResolucionComercial(
-                            resolucionComercialControler: resolucionComercialController,
-                      reclamo: reclamo),
-                      ),
-                    )
-                  : const SizedBox(),
-             
+              if (reclamo.estado !=  "Creado")
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 2,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                    child: Column(
+                      children: [
+                        SeccionResolucion(
+                          resolucionController: resolucionController,
+                          reclamo: reclamo,
+                        ),
+                        const SizedBox(height: 20),
+                        Visibility(
+                          visible: currentStep == 4 ? true : false,
+                          child: SeccionResolucionComercial(
+                            resolucionComercialControler:
+                                resolucionComercialController,
+                            reclamo: reclamo,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                const SizedBox(),
               if (reclamo.estado != "Finalizado")
                 Padding(
                   padding: const EdgeInsets.only(top: 30.0, bottom: 30.0),
                   child: FloatingActionButton.extended(
                       onPressed: () async {
+                        if(reclamo.estado == "Creado"){
+
+
+                          if(userRole != 'Calidad'){
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const DialogCustom(
+                                      resp: 'No tienes permisos para asignar reclamos',
+                                      title: 'Error');
+                                });
+                            return;
+                          }
+                          if (dropdownValueTipoReclamo == 'Otros' &&
+                              otroTipoController.text.isEmpty) {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const DialogCustom(
+                                      resp: 'Debe ingresar un tipo de reclamo',
+                                      title: 'Error');
+                                });
+                            return;
+                          }
+                          if (personalController.text.isEmpty) {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const DialogCustom(
+                                      resp: 'Debe ingresar un personal a cargo',
+                                      title: 'Error');
+                                });
+                            return;
+                          }
+                        }
                         String resp = await Provider.of<Myprovider>(context,
                                 listen: false)
                             .updateReclamo(
@@ -136,25 +178,21 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                         // if (!mounted) return;
                         // ignore: use_build_context_synchronously
                         showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return DialogCustom(resp: resp, title: 'Respuesta');
-                          }
+                            context: context,
+                            builder: (BuildContext context) {
+                              return DialogCustom(
+                                  resp: resp, title: 'Respuesta');
+                            });
 
-                        );
-
-                        currentStep = reclamo.estado == "Creado"
-                            ? 3
-                            : 4;
-                        setState(() {
-                          
-                        });
-                     
+                        currentStep = reclamo.estado == "Creado" ? 3 : 4;
+                        setState(() {});
                       },
                       icon: const Icon(Icons.save),
                       label: reclamo.estado == "Creado"
                           ? const Text('Asignar reclamo')
-                          : const Text('Finalizar reclamo')),
+                          : reclamo.estado == "Asignado"
+                              ? const Text('Resolución QC')
+                              : const Text('Finalizar reclamo')),
                 ),
             ],
           ),
@@ -187,11 +225,10 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                     fontWeight: FontWeight.bold,
                     color: Colors.brown)),
           ),
-        //  const SizedBox(height: 10),
+          //  const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-       
               if (reclamo.estado == "Creado")
                 Container(
                   width: 240,
@@ -227,15 +264,19 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                   ),
                 ),
               if (reclamo.estado != "Creado")
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: Text("Tipo reclamo: ${reclamo.tipoReclamo}",
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold,color: Color.fromARGB(255, 87, 62, 53))),
-              ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: Text("Tipo reclamo: ${reclamo.tipoReclamo}",
+                      style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 87, 62, 53))),
+                ),
               // crear edittext para ingresar otro tipo de reclamo
 
-              const SizedBox(width: 20,),
+              const SizedBox(
+                width: 20,
+              ),
 
               Visibility(
                 visible: dropdownValueTipoReclamo == 'Otros' ? true : false,
@@ -262,15 +303,16 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                       ),
                     )
                   : Padding(
-                    padding: const EdgeInsets.only(bottom: 20.0),
-                    child: Text("Personal a cargo: ${reclamo.personal}",
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold,color: Color.fromARGB(255, 87, 62, 53))),
-                  ),
+                      padding: const EdgeInsets.only(bottom: 20.0),
+                      child: Text("Personal a cargo: ${reclamo.personal}",
+                          style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 87, 62, 53))),
+                    ),
               const SizedBox(height: 10),
             ],
           ),
-          
         ],
       ),
     );
@@ -285,9 +327,9 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
               arguments: reclamo.objectId!.oid);
         },
       ),
-      Visibility (
+      Visibility(
         visible: reclamo.estado == "Finalizado" ? false : true,
-                child: IconButton(
+        child: IconButton(
           icon: const Icon(Icons.cloud_download_sharp, color: Colors.white),
           onPressed: () {
             showDialog(
@@ -369,10 +411,9 @@ class SeccionResolucion extends StatelessWidget {
       ),
       child: Column(
         children: [
-         
           const Padding(
             padding: EdgeInsets.only(top: 20.0),
-            child: Text('Datos Resolución',
+            child: Text('Datos Resolución QC',
                 style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
@@ -389,7 +430,7 @@ class SeccionResolucion extends StatelessWidget {
                 labelText: 'Resolución',
               ),
               style: const TextStyle(
-               // fontSize: 15,
+                // fontSize: 15,
                 color: Colors.brown,
               ),
               maxLines: null,
@@ -401,7 +442,6 @@ class SeccionResolucion extends StatelessWidget {
     );
   }
 }
-
 
 class SeccionResolucionComercial extends StatelessWidget {
   const SeccionResolucionComercial({
@@ -429,7 +469,6 @@ class SeccionResolucionComercial extends StatelessWidget {
       ),
       child: Column(
         children: [
-         
           const Padding(
             padding: EdgeInsets.only(top: 20.0),
             child: Text('Datos Resolución Comercial',
@@ -449,7 +488,7 @@ class SeccionResolucionComercial extends StatelessWidget {
                 labelText: 'Resolución',
               ),
               style: const TextStyle(
-               // fontSize: 15,
+                // fontSize: 15,
                 color: Colors.brown,
               ),
               maxLines: null,
@@ -559,12 +598,11 @@ class AreaComercial extends StatelessWidget {
             width: MediaQuery.of(context).size.width / 2,
             child: Padding(
               padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-              child:
-               EditTextNormal(
-                  controller: motivoController,
-                  labeltext: 'Motivo',
-                  hintText: 'Motivo',
-                ),     
+              child: EditTextNormal(
+                controller: motivoController,
+                labeltext: 'Motivo',
+                hintText: 'Motivo',
+              ),
             ),
           ),
           // observaciones de motivo
@@ -572,9 +610,10 @@ class AreaComercial extends StatelessWidget {
             width: MediaQuery.of(context).size.width / 2,
             child: Padding(
               padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-               child: TextObservacion(controller: motivoObservacionController
-               , labeltext: 'Observaciones motivo',),
-           
+              child: TextObservacion(
+                controller: motivoObservacionController,
+                labeltext: 'Observaciones motivo',
+              ),
             ),
           ),
         ]));

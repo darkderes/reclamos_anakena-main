@@ -12,4 +12,4 @@ class Constants {
   static const String textoTipo = 'Tipo Reclamo';
 
 }
-final List<String> itemsTipo = ["Creado","Asignado","Finalizado"];
+final List<String> itemsTipo = ["Creado","Asignado","Resolución QC","Finalizado"];
