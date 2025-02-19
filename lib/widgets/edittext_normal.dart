@@ -7,6 +7,7 @@ class EditTextNormal extends StatelessWidget {
     required this.labeltext,
     required this.hintText,
     this.validator,
+    required this.readOnly,
 
 
   });
@@ -15,6 +16,7 @@ class EditTextNormal extends StatelessWidget {
   final String labeltext;
   final String hintText;
   final String? Function(String?)? validator;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +26,15 @@ class EditTextNormal extends StatelessWidget {
         border: const OutlineInputBorder(),
         hintText: hintText,
         labelText: labeltext,
+        
       ),
       validator: validator,
       style: const TextStyle(
         fontSize: 15,
         color: Colors.brown,
        
-      )
+      ),
+      readOnly: readOnly,
     );
   }
 }

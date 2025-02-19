@@ -23,6 +23,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
   int currentStep = 0;
   late Reclamo reclamo;
   String? userRole;
+   bool _isButtonDisabled = false;
 
   @override
   void initState() {
@@ -78,7 +79,8 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
               AreaComercial(
                   reclamo: reclamo,
                   motivoController: motivoController,
-                  motivoObservacionController: motivoObservacionController),
+                  motivoObservacionController: motivoObservacionController,
+                ),
               const SizedBox(height: 10),
               const Divider(),
               seccionCalidad(context, reclamo),
@@ -112,7 +114,9 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                 Padding(
                   padding: const EdgeInsets.only(top: 30.0, bottom: 30.0),
                   child: FloatingActionButton.extended(
-                      onPressed: () async {
+                      onPressed: _isButtonDisabled ? 
+                      null : 
+                      () async {
                         if(reclamo.estado == "Creado"){
 
 
@@ -148,6 +152,52 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                             return;
                           }
                         }
+                        if(reclamo.estado == "Asignado"){
+                          if(userRole != 'Calidad'){
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const DialogCustom(
+                                      resp: 'No tienes permisos para ingresar resolución qc',
+                                      title: 'Error');
+                                });
+                            return;
+                          
+                          }
+                         if(resolucionController.text.isEmpty){
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const DialogCustom(
+                                      resp: 'Debe ingresar una resolución de QC',
+                                      title: 'Error');
+                                });
+                            return;
+                          }
+                          
+                        }
+                        if(reclamo.estado == "Resolución QC"){
+                          if(userRole != 'Comercial'){
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const DialogCustom(
+                                      resp: 'No tienes permisos para ingresar resolución comercial',
+                                      title: 'Error');
+                                });
+                            return;
+                          }
+                          if(resolucionComercialController.text.isEmpty){
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const DialogCustom(
+                                      resp: 'Debe ingresar una resolución comercial',
+                                      title: 'Error');
+                                });
+                            return;
+                          }
+                        }
                         String resp = await Provider.of<Myprovider>(context,
                                 listen: false)
                             .updateReclamo(
@@ -172,7 +222,11 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                             resolucionComercialController.text,
                             reclamo.estado == "Creado"
                                 ? 'Asignado'
-                                : 'Finalizado',
+                                : reclamo.estado == "Asignado"
+                                    ? 'Resolución QC'
+                                    : 'Finalizado',
+                            reclamo.imagenes,
+                            reclamo.archivos,
                           ),
                         );
                         // if (!mounted) return;
@@ -185,7 +239,9 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                             });
 
                         currentStep = reclamo.estado == "Creado" ? 3 : 4;
-                        setState(() {});
+                        setState(() {
+                          _isButtonDisabled = true;
+                        });
                       },
                       icon: const Icon(Icons.save),
                       label: reclamo.estado == "Creado"
@@ -285,7 +341,8 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                   child: EditTextNormal(
                       controller: otroTipoController,
                       labeltext: Constants.textoTipo,
-                      hintText: Constants.textoTipo),
+                      hintText: Constants.textoTipo,
+                      readOnly: reclamo.estado == "Finalizado" ? true : false),
                 ),
               ),
 
@@ -299,7 +356,8 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                         child: EditTextNormal(
                             controller: personalController,
                             labeltext: Constants.textoPersonal,
-                            hintText: Constants.textoPersonal),
+                            hintText: Constants.textoPersonal,
+                            readOnly: reclamo.estado == "Finalizado" ? true : false),
                       ),
                     )
                   : Padding(
@@ -324,7 +382,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
         icon: const Icon(Icons.all_inbox_rounded, color: Colors.white),
         onPressed: () {
           Navigator.pushNamed(context, "/galery_files",
-              arguments: reclamo.objectId!.oid);
+              arguments: reclamo);
         },
       ),
       Visibility(
@@ -352,7 +410,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
         icon: const Icon(Icons.collections, color: Colors.white),
         onPressed: () {
           Navigator.pushNamed(context, "/galery_screen",
-              arguments: reclamo.objectId!.oid);
+              arguments: reclamo);
         },
       ),
       Padding(
@@ -361,19 +419,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
           visible: reclamo.estado == "Finalizado" ? false : true,
           child: IconButton(
               onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Dialog(
-                      child: SizedBox(
-                        // Puedes ajustar el tamaño del contenedor según tus necesidades
-                        width: 500,
-                        height: 300,
-                        child: LoadImages(id: reclamo.objectId!.oid),
-                      ),
-                    );
-                  },
-                );
+                cargarYGuardarImagenes(context, userRole!,reclamo.objectId!.oid);
               },
               icon: const Icon(
                 Icons.add_a_photo,
@@ -390,10 +436,12 @@ class SeccionResolucion extends StatelessWidget {
     super.key,
     required this.resolucionController,
     required this.reclamo,
+
   });
 
   final TextEditingController resolucionController;
   final Reclamo reclamo;
+
 
   @override
   Widget build(BuildContext context) {
@@ -424,7 +472,7 @@ class SeccionResolucion extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             child: TextField(
               controller: resolucionController,
-              readOnly: reclamo.estado == "Finalizado" ? true : false,
+              readOnly: reclamo.estado == "Asignado" ? false : true,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Resolución',
@@ -435,6 +483,7 @@ class SeccionResolucion extends StatelessWidget {
               ),
               maxLines: null,
               keyboardType: TextInputType.multiline,
+              
             ),
           ),
         ],
@@ -482,7 +531,7 @@ class SeccionResolucionComercial extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             child: TextField(
               controller: resolucionComercialControler,
-              readOnly: reclamo.estado == "Finalizado" ? true : false,
+              readOnly: reclamo.estado == "Resolución QC" ? false : true,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Resolución',
@@ -512,6 +561,7 @@ class AreaComercial extends StatelessWidget {
   final Reclamo reclamo;
   final TextEditingController motivoController;
   final TextEditingController motivoObservacionController;
+
 
   @override
   Widget build(BuildContext context) {
@@ -602,6 +652,8 @@ class AreaComercial extends StatelessWidget {
                 controller: motivoController,
                 labeltext: 'Motivo',
                 hintText: 'Motivo',
+                readOnly: true,
+                
               ),
             ),
           ),
@@ -613,6 +665,7 @@ class AreaComercial extends StatelessWidget {
               child: TextObservacion(
                 controller: motivoObservacionController,
                 labeltext: 'Observaciones motivo',
+                readOnly: true,
               ),
             ),
           ),

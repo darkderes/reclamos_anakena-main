@@ -75,6 +75,8 @@ class _AddReclamosPageState extends State<AddReclamosPage>
       "", // Resolución
       "", // Resolución comercial
       'Creado',
+      [], // Imágenes
+      [], // Archivos
     );
   }
 
@@ -256,6 +258,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                                 controller: productoController,
                                 labeltext: Constants.textoProducto,
                                 hintText: Constants.textoProducto,
+                                readOnly: false,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return '* Por favor ingrese un producto';
@@ -279,6 +282,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                                 controller: embarqueController,
                                 labeltext: Constants.textoEmbarque,
                                 hintText: Constants.textoEmbarque,
+                                readOnly: false,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return '* Por favor ingrese un N° de embarque';
@@ -296,6 +300,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                                 controller: nombreClienteController,
                                 labeltext: Constants.textoCliente,
                                 hintText: Constants.textoCliente,
+                                readOnly: false,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return '* Por favor ingrese un nombre de cliente';
@@ -313,6 +318,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                                 controller: comercialController,
                                 labeltext: Constants.textoComercialCargo,
                                 hintText: Constants.textoComercialCargo,
+                                readOnly: false,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return '* Por favor ingrese un nombre de comercial';
@@ -344,6 +350,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                                 controller: motivoController,
                                 labeltext: Constants.textoMotivo,
                                 hintText: Constants.textoMotivo,
+                                readOnly: false,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return '* Por favor ingrese un motivo';
@@ -363,6 +370,7 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                           child: TextObservacion(
                             controller: observacionMotivoController,
                             labeltext: 'Observaciones Motivo',
+                            readOnly: false,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return '* Por favor ingrese el motivo del reclamo';

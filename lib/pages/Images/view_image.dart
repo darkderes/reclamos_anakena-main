@@ -3,12 +3,14 @@ import 'package:reclamos_anakena/barrels.dart';
 class ViewImage extends StatefulWidget {
   final String url;
   final String estado;
+  final String idReclamo;
   final VoidCallback refreshGallery;
 
   const ViewImage(
       {super.key,
       required this.url,
       required this.estado,
+      required this.idReclamo,
       required this.refreshGallery});
 
   @override
@@ -51,7 +53,7 @@ class _ViewImageState extends State<ViewImage> {
                   visible: widget.estado == "0" ? true : false,
                   child: IconButton(
                     onPressed: () {
-                       deleteUrlImage(widget.url);
+                       deleteUrlImage(widget.idReclamo,widget.url);
                       widget.refreshGallery();
                       // ignore: use_build_context_synchronously
                       Navigator.pop(context, true);

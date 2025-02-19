@@ -1,4 +1,5 @@
 import 'package:mongo_dart/mongo_dart.dart';
+import 'package:reclamos_anakena/barrels.dart';
 
 class Reclamo {
   ObjectId? objectId;
@@ -17,6 +18,8 @@ class Reclamo {
   String resolucion;
   String resolucionComercial;
   String estado;
+  List<Imagenes> imagenes = [];
+  List<Archivos> archivos = [];
 
   Reclamo(
       this.objectId,
@@ -34,7 +37,9 @@ class Reclamo {
       this.personal,
       this.resolucion,
       this.resolucionComercial,
-      this.estado);
+      this.estado,
+      this.imagenes,
+      this.archivos);
 
   Map<String, dynamic> toMap() {
     return {
@@ -54,6 +59,8 @@ class Reclamo {
       'resolucion': resolucion,
       'resolucionComercial': resolucionComercial ?? '',
       'estado': estado,
+      'imagenes': imagenes.map((e) => e.toMap()).toList(),
+      'archivos': archivos.map((e) => e.toMap()).toList(),
     };
   }
 }

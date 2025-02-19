@@ -65,19 +65,7 @@ class AppBarAdd extends StatelessWidget implements PreferredSizeWidget  {
             visible: _currentStep == 2 ? true : false,
             child: IconButton(
                 onPressed: () async {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        child: SizedBox(
-                          // Puedes ajustar el tamaño del contenedor según tus necesidades
-                          width: 500,
-                          height: 300,
-                          child: LoadImages(id: myProvider.reclamoId),
-                        ),
-                      );
-                    },
-                  );
+                  cargarYGuardarImagenes(context, "Comercial", myProvider.reclamoId);
                 },
                 icon: const Icon(Icons.add_a_photo_sharp)),
           ),

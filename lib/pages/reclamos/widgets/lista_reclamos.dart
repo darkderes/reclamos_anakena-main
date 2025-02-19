@@ -89,7 +89,13 @@ class ListaReclamos extends StatelessWidget {
                                             color: Color.fromARGB(
                                                 255, 139, 86, 6),
                                             fontWeight: FontWeight.bold)
-                                        : const TextStyle(
+                                        :
+                                         reclamo.estado == "Resolución QC"
+                                        ? const TextStyle(
+                                            color: Colors.blue,
+                                            fontWeight:
+                                                FontWeight.bold):
+                                         const TextStyle(
                                             color: Colors.red,
                                             fontWeight:
                                                 FontWeight.bold),

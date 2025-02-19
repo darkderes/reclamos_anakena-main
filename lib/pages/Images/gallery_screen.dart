@@ -1,8 +1,9 @@
 import 'package:reclamos_anakena/barrels.dart';
 
 class GaleryScreen extends StatefulWidget {
-  final String proceso;
-  const GaleryScreen({super.key, required this.proceso});
+  // final String proceso;
+  final Reclamo reclamo;
+  const GaleryScreen({super.key, required this.reclamo});
 
   @override
   State<GaleryScreen> createState() => _GaleryScreenState();
@@ -19,7 +20,7 @@ class _GaleryScreenState extends State<GaleryScreen> {
         child: Column(
           children: [
             FutureBuilder<List<Widget>>(
-              future: _imagenesList(widget.proceso, "Comercial"),
+              future: _imagenesList(widget.reclamo, "Comercial"),
               builder:
                   (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -65,7 +66,7 @@ class _GaleryScreenState extends State<GaleryScreen> {
               },
             ),
             FutureBuilder<List<Widget>>(
-              future: _imagenesList(widget.proceso, "Calidad"),
+              future: _imagenesList(widget.reclamo, "Calidad"),
               builder:
                   (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -118,10 +119,10 @@ class _GaleryScreenState extends State<GaleryScreen> {
     );
   }
 
-  Future<List<Widget>> _imagenesList(String proceso, String section) async {
+  Future<List<Widget>> _imagenesList(Reclamo reclamo, String section) async {
     List<Widget> lista = [];
 
-    List<Imagenes> imagenes = await traerUrlImagenesMongo(proceso);
+     List<Imagenes> imagenes = reclamo.imagenes;
 
     // Filtrar imágenes por sección
     if (section != "0") {
@@ -144,6 +145,7 @@ class _GaleryScreenState extends State<GaleryScreen> {
                 builder: (context) => ViewImage(
                   url: item.url,
                   estado: "0",
+                  idReclamo: reclamo.objectId.toString(),
                   refreshGallery: _refreshGallery,
                 ),
               ),

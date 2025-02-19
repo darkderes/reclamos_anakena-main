@@ -4,16 +4,15 @@ class Imagenes {
   ObjectId? objectid;
   String seccion;
   String url;
-  String idReclamo;
 
-  Imagenes(this.objectid,this.seccion, this.url, this.idReclamo);
+
+  Imagenes(this.objectid,this.seccion, this.url);
 
   Map<String, dynamic> toMap() {
     return {
       '_id': objectid,
       'seccion': seccion,
       'url': url,
-      'idReclamo': idReclamo,
     };
   }
   // crear fromMap
@@ -21,8 +20,7 @@ class Imagenes {
     return Imagenes(
       map['_id'],
       map['seccion'],
-      map['url'],
-      map['idReclamo'],
+      map['url']
     );
   }
 }

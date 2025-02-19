@@ -47,6 +47,12 @@ Future<List<Reclamo>> obtenerReclamos() async {
       data['resolucion'],
       data['resolucionComercial'] ?? '',
       data['estado'],
+       (data['imagenes'] as List<dynamic>?)
+          ?.map((item) => Imagenes.fromMap(item))
+          .toList() ?? [],
+      (data['archivos'] as List<dynamic>?)
+          ?.map((item) => Archivos.fromMap(item))
+          .toList() ?? [],
     );
   }).toList();
 

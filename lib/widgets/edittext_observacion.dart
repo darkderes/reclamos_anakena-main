@@ -5,12 +5,14 @@ class TextObservacion extends StatelessWidget {
     super.key,
     required this.controller,
     required this.labeltext,
-    this.validator
+    this.validator,
+    required this.readOnly
   });
 
   final TextEditingController controller;
   final String labeltext;
   final String? Function(String?)? validator;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,7 @@ class TextObservacion extends StatelessWidget {
       ),
       maxLines: null,
       keyboardType: TextInputType.multiline,
+      readOnly: readOnly,
     );
   }
 }
