@@ -4,14 +4,13 @@ class ViewImage extends StatefulWidget {
   final String url;
   final String estado;
   final String idReclamo;
-  final VoidCallback refreshGallery;
+
 
   const ViewImage(
       {super.key,
       required this.url,
       required this.estado,
-      required this.idReclamo,
-      required this.refreshGallery});
+      required this.idReclamo});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -20,20 +19,12 @@ class ViewImage extends StatefulWidget {
 
 class _ViewImageState extends State<ViewImage> {
 // Widget de carga inicial
-  @override
-  void initState() {
-    super.initState();
-    loadImage();
-  }
 
-  Future<void> loadImage() async {
-   
-    setState(
-        () {}); // Actualiza la interfaz de usuario después de cargar la imagen
-  }
 
   @override
   Widget build(BuildContext context) {
+    //llamar a mi provider
+    final provider = Provider.of<Myprovider>(context, listen: false);
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -53,8 +44,9 @@ class _ViewImageState extends State<ViewImage> {
                   visible: widget.estado == "0" ? true : false,
                   child: IconButton(
                     onPressed: () {
-                       deleteUrlImage(widget.idReclamo,widget.url);
-                      widget.refreshGallery();
+                      provider.deleteUrlImages(widget.idReclamo, widget.url);
+                     //  deleteUrlImage(widget.idReclamo,widget.url);
+                     //  widget.refreshGallery();
                       // ignore: use_build_context_synchronously
                       Navigator.pop(context, true);
                     },

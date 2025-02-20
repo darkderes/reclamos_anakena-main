@@ -1,7 +1,9 @@
 import 'package:reclamos_anakena/barrels.dart';
 
 
-  Future<void> cargarYGuardarImagenes(BuildContext context,String perfil,String id) async {
+  Future<void> cargarYGuardarImagenes(BuildContext context,String perfil,Reclamo reclamo) async {
+    //llamar a mi provider
+    final provider = Provider.of<Myprovider>(context, listen: false);
     showDialog(
       context: context,
       barrierDismissible:
@@ -31,11 +33,14 @@ import 'package:reclamos_anakena/barrels.dart';
         
         if (urlImage != null) {
           var imagenes = Imagenes(
-            null,
+           
             perfil,
             urlImage,
           );
-          insertarImagenesMongo(imagenes, id);
+          // como hago para modificar mi reclamo con las imagenes
+           reclamo.imagenes.add(imagenes);
+           provider.updateReclamo(reclamo);
+        
         }
       }
     } catch (e) {

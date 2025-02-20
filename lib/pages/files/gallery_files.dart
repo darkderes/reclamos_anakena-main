@@ -3,16 +3,29 @@ import 'package:reclamos_anakena/barrels.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GalleryFiles extends StatefulWidget {
-  final String proceso;
-  const GalleryFiles({super.key,required this.proceso});
+  final Reclamo reclamo;
+  const GalleryFiles({super.key,required this.reclamo});
 
   @override
   State<GalleryFiles> createState() => _GalleryFilesState();
+  
 }
 
 class _GalleryFilesState extends State<GalleryFiles> {
+  
+    @override
+  void initState() {
+    super.initState();
+    final provider = Provider.of<Myprovider>(context, listen: false);
+    if (widget.reclamo.objectId != null) {
+      provider.getReclamoById(widget.reclamo.objectId!);
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
+     final provider = Provider.of<Myprovider>(context, listen: false);
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Galeria de Archivos'),
@@ -21,7 +34,7 @@ class _GalleryFilesState extends State<GalleryFiles> {
         child: Column(
           children: [
            FutureBuilder<List<Widget>>(
-  future: _archivosList(widget.proceso, "Area"),
+  future: _archivosList(provider.reclamo, "Area"),
   builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
       return const Padding(
@@ -61,9 +74,12 @@ class _GalleryFilesState extends State<GalleryFiles> {
     );
   }
 
-  Future<List<Widget>> _archivosList(String proceso, String area) async {
+  Future<List<Widget>> _archivosList(Reclamo reclamo, String area) async {
     List<Widget> lista = [];
-    List<Archivos> archivos = await traerUrlArchivosMongo(proceso);
+    List <Archivos> archivos = [];
+   archivos = reclamo.archivos; 
+      final provider = Provider.of<Myprovider>(context, listen: true);
+    //await traerUrlArchivosMongo(proceso);
     for (var item in archivos) {
       lista.add(
         Padding(
@@ -102,8 +118,9 @@ class _GalleryFilesState extends State<GalleryFiles> {
             ),
                InkWell(
               onTap: () {
-              deleteUrlArchivo(item.url);
-              setState(() {});
+             // deleteUrlArchivo(item.url);
+              provider.deleteUrlArchivos(widget.reclamo.objectId.toString(), item.url);
+             // setState(() {});
               },
               child: const Padding(
                 padding: EdgeInsets.all(8.0),

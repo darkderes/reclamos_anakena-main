@@ -54,9 +54,9 @@ class MyApp extends StatelessWidget {
                   return GaleryScreen(reclamo: miDato);
                 },
                 "/galery_files": (context) {
-                  final String miDato =
-                      ModalRoute.of(context)!.settings.arguments as String;
-                  return GalleryFiles(proceso: miDato);
+                  final Reclamo miDato =
+                      ModalRoute.of(context)!.settings.arguments as Reclamo;
+                  return GalleryFiles(reclamo: miDato);
                 },
               },
             ),

@@ -1,6 +1,5 @@
 import 'package:reclamos_anakena/barrels.dart';
 import 'package:reclamos_anakena/pages/reclamos/widgets/app_bar_reclamos.dart';
-import 'package:reclamos_anakena/pages/reclamos/actions/ingreso_reclamos.dart';
 import 'package:reclamos_anakena/widgets/horizontal_stepper.dart';
 
 class AddReclamos extends StatefulWidget {
@@ -10,32 +9,15 @@ class AddReclamos extends StatefulWidget {
   State<AddReclamos> createState() => _AddReclamosState();
 }
 
-class _AddReclamosState extends State<AddReclamos> {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return const AddReclamosPage(title: 'Ingreso de reclamo');
-  }
-}
 
-class AddReclamosPage extends StatefulWidget {
-  const AddReclamosPage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<AddReclamosPage> createState() => _AddReclamosPageState();
-}
-
-class _AddReclamosPageState extends State<AddReclamosPage>
+class _AddReclamosState extends State<AddReclamos>
     with RestorationMixin {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController nombreClienteController =
       TextEditingController(text: '');
   TextEditingController embarqueController = TextEditingController(text: '');
   TextEditingController comercialController = TextEditingController(text: '');
-  TextEditingController observacionMotivoController =
-      TextEditingController(text: '');
+  TextEditingController observacionMotivoController = TextEditingController(text: '');
   TextEditingController motivoController = TextEditingController(text: '');
   TextEditingController productoController = TextEditingController(text: '');
   String dropdownValueTipo = 'Reclamo';
@@ -43,6 +25,26 @@ class _AddReclamosPageState extends State<AddReclamosPage>
   bool _isButtonDisabled = false;
   String? userRole;
   String? userName;
+   Reclamo nuevoReclamo =  Reclamo(
+      null,
+      "", // Fecha de reclamo en formato de cadena
+      DateTime.now(), // Fecha de ingreso en formato de cadena
+      "", // Tipo de reclamo
+      "", // Nombre de cliente
+      "", // N° de embarque
+      "", // Comercial
+      "", // Motivo
+      "", // Producto
+      "", // Observación motivo
+      "", // Tipo de reclamo
+      "", // Otro tipo
+      "", // Personal a cargo de resolución
+      "", // Resolución
+      "", // Resolución comercial
+      'Creado',
+      [], // Imágenes
+      [], // Archivos
+    );
 
   @override
   void initState() {
@@ -140,7 +142,9 @@ class _AddReclamosPageState extends State<AddReclamosPage>
 
     return Scaffold(
       appBar: AppBarAdd(
-          widget: widget, currentStep: _currentStep, myProvider: myProvider),
+          title: "Ingreso Reclamos",
+          perfil: userRole ?? 'default',
+          reclamo: nuevoReclamo,),
       body: SingleChildScrollView(
         child: Center(
           child: Form(
@@ -390,15 +394,35 @@ class _AddReclamosPageState extends State<AddReclamosPage>
                                   if (!_formKey.currentState!.validate()) {
                                     return;
                                   }
-                                  Reclamo nuevoReclamo = crearReclamo();
-                                  String resp = await handleReclamoLogic(
-                                      context, myProvider, nuevoReclamo);
+                                 nuevoReclamo = crearReclamo();
+                                  nuevoReclamo =
+                                      await myProvider.addReclamo(nuevoReclamo);
+                                  // String resp = await handleReclamoLogic(
+                                  //     context, myProvider, nuevoReclamo);
                                   setState(() {
-                                    if (resp == "Ocurrio un error") {
+                                    if (nuevoReclamo.objectId == null) {
                                       _currentStep = 1;
                                     } else {
+                                      sendEmail(nuevoReclamo);
                                       _currentStep = 2;
                                       _isButtonDisabled = true;
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text(
+                                                'Reclamo guardado correctamente'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text('Aceptar'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
                                     }
                                   });
                                 },

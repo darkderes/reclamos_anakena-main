@@ -10,8 +10,17 @@ class GaleryScreen extends StatefulWidget {
 }
 
 class _GaleryScreenState extends State<GaleryScreen> {
+     @override
+  void initState() {
+    super.initState();
+    final provider = Provider.of<Myprovider>(context, listen: false);
+    if (widget.reclamo.objectId != null) {
+      provider.getReclamoById(widget.reclamo.objectId!);
+    }
+  }
   @override
   Widget build(BuildContext context) {
+      final provider = Provider.of<Myprovider>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Galeria de Imagenes'),
@@ -20,7 +29,7 @@ class _GaleryScreenState extends State<GaleryScreen> {
         child: Column(
           children: [
             FutureBuilder<List<Widget>>(
-              future: _imagenesList(widget.reclamo, "Comercial"),
+              future: _imagenesList(provider.reclamo, "Comercial"),
               builder:
                   (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -66,7 +75,7 @@ class _GaleryScreenState extends State<GaleryScreen> {
               },
             ),
             FutureBuilder<List<Widget>>(
-              future: _imagenesList(widget.reclamo, "Calidad"),
+              future: _imagenesList(provider.reclamo, "Calidad"),
               builder:
                   (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -146,7 +155,6 @@ class _GaleryScreenState extends State<GaleryScreen> {
                   url: item.url,
                   estado: "0",
                   idReclamo: reclamo.objectId.toString(),
-                  refreshGallery: _refreshGallery,
                 ),
               ),
             );
@@ -160,8 +168,5 @@ class _GaleryScreenState extends State<GaleryScreen> {
     return lista;
   }
 
-  void _refreshGallery() {
-    // Refresh your image list here
-    setState(() {});
-  }
+
 }

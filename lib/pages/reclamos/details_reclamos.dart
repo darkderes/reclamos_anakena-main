@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:reclamos_anakena/barrels.dart';
+import 'package:reclamos_anakena/pages/reclamos/widgets/app_bar_reclamos.dart';
 import 'package:reclamos_anakena/widgets/horizontal_stepper.dart';
 
 class DetailsReclamos extends StatefulWidget {
@@ -20,7 +21,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
   TextEditingController resolucionComercialController =
       TextEditingController(text: '');
   String dropdownValueTipoReclamo = 'Inocuidad';
-  int currentStep = 0;
+  int _currentStep = 0;
   late Reclamo reclamo;
   String? userRole;
    bool _isButtonDisabled = false;
@@ -40,7 +41,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
     otroTipoController.text = reclamo.otroTipo;
     resolucionController.text = reclamo.resolucion;
     resolucionComercialController.text = reclamo.resolucionComercial;
-    currentStep = reclamo.estado == "Creado"
+    _currentStep = reclamo.estado == "Creado"
         ? 2
         : reclamo.estado == "Asignado"
             ? 3
@@ -55,10 +56,14 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<Myprovider>(context);
+
+     var myProvider = Provider.of<Myprovider>(context);
 
     return Scaffold(
-      appBar: appBarDetails(context, reclamo),
+            appBar: AppBarAdd(title: 'Detalles Reclamos',
+            perfil: userRole ?? '',
+        reclamo: reclamo,),
+      // appBar: appBarDetails(context, reclamo),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
@@ -69,7 +74,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: HorizontalStepper(
-                  currentStep: currentStep,
+                  currentStep: _currentStep,
                 ),
               ),
               const Padding(
@@ -97,7 +102,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                         ),
                         const SizedBox(height: 20),
                         Visibility(
-                          visible: currentStep == 4 ? true : false,
+                          visible: _currentStep == 4 ? true : false,
                           child: SeccionResolucionComercial(
                             resolucionComercialControler:
                                 resolucionComercialController,
@@ -201,7 +206,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                         String resp = await Provider.of<Myprovider>(context,
                                 listen: false)
                             .updateReclamo(
-                          reclamo.objectId!.oid,
+                          // reclamo.objectId!.oid,
                           Reclamo(
                             reclamo.objectId,
                             reclamo.fechaReclamo,
@@ -238,7 +243,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
                                   resp: resp, title: 'Respuesta');
                             });
 
-                        currentStep = reclamo.estado == "Creado" ? 3 : 4;
+                        _currentStep = reclamo.estado == "Creado" ? 3 : 4;
                         setState(() {
                           _isButtonDisabled = true;
                         });
@@ -374,60 +379,6 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
         ],
       ),
     );
-  }
-
-  AppBar appBarDetails(BuildContext context, Reclamo reclamo) {
-    return AppBar(title: const Text("Detalles Reclamos"), actions: <Widget>[
-      IconButton(
-        icon: const Icon(Icons.all_inbox_rounded, color: Colors.white),
-        onPressed: () {
-          Navigator.pushNamed(context, "/galery_files",
-              arguments: reclamo);
-        },
-      ),
-      Visibility(
-        visible: reclamo.estado == "Finalizado" ? false : true,
-        child: IconButton(
-          icon: const Icon(Icons.cloud_download_sharp, color: Colors.white),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return Dialog(
-                  child: SizedBox(
-                    // Puedes ajustar el tamaño del contenedor según tus necesidades
-                    width: 500,
-                    height: 300,
-                    child: LoadFiles(id: reclamo.objectId!.oid),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-      ),
-      IconButton(
-        icon: const Icon(Icons.collections, color: Colors.white),
-        onPressed: () {
-          Navigator.pushNamed(context, "/galery_screen",
-              arguments: reclamo);
-        },
-      ),
-      Padding(
-        padding: const EdgeInsets.only(right: 20.0),
-        child: Visibility(
-          visible: reclamo.estado == "Finalizado" ? false : true,
-          child: IconButton(
-              onPressed: () {
-                cargarYGuardarImagenes(context, userRole!,reclamo.objectId!.oid);
-              },
-              icon: const Icon(
-                Icons.add_a_photo,
-                color: Colors.white,
-              )),
-        ),
-      )
-    ]);
   }
 }
 

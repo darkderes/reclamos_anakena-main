@@ -3,15 +3,18 @@ import 'package:reclamos_anakena/barrels.dart';
 
 // ignore: must_be_immutable
 class LoadFiles extends StatefulWidget {
-  String? id;
-  LoadFiles({super.key, required this.id});
+
+  final String seccion;
+  final Reclamo reclamo;
+
+  const LoadFiles({super.key,required this.seccion,required this.reclamo});
 
   @override
   State<LoadFiles> createState() => _LoadFilesState();
 }
 
 class _LoadFilesState extends State<LoadFiles> {
-  String? selectedValue;
+
   String labelText = ''; 
 
   @override
@@ -21,22 +24,7 @@ class _LoadFilesState extends State<LoadFiles> {
      content: SingleChildScrollView( // Asegura que el contenido se muestre correctamente en pantallas pequeñas
       child: ListBody(
         children: <Widget>[
-          DropdownButton<String>(
-            value: selectedValue,
-            hint: const Text('Selecciona'),
-            onChanged: (newValue) {
-              setState(() {
-                selectedValue = newValue;
-              });
-            },
-            items: Constants.itemsSection
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
+      
           TextField(
             onChanged: (value) {
               setState(() {
@@ -55,7 +43,7 @@ class _LoadFilesState extends State<LoadFiles> {
         TextButton(
           child: const Text('Aceptar'),
           onPressed: () async {
-            await cargarYGuardarFiles();
+            await cargarYGuardarFiles(widget.seccion,widget.reclamo);
             // Cierra el diálogo
             Navigator.of(context).pop();
           },
@@ -64,7 +52,8 @@ class _LoadFilesState extends State<LoadFiles> {
     );
   }
 
-  Future<void> cargarYGuardarFiles() async {
+  Future<void> cargarYGuardarFiles(String perfil,Reclamo reclamo) async {
+    final provider = Provider.of<Myprovider>(context, listen: false);
     showDialog(
       context: context,
       barrierDismissible:
@@ -91,13 +80,14 @@ class _LoadFilesState extends State<LoadFiles> {
      //   String? urlFile = await uploadFile(files.path);
         String? urlFile =  await uploadFileSupabase(files);
         Archivos archivo = Archivos(
-          null,
-            selectedValue ?? 'Comercial',
+       
+            widget.seccion,
             urlFile ,
             labelText,
-            widget.id ?? '0',
+        
         );
-        insertarArchivoMongo(archivo);
+        reclamo.archivos.add(archivo);
+        provider.updateReclamo(reclamo);
       }
     } catch (e) {
       debugPrint('Error al cargar archivo: $e');

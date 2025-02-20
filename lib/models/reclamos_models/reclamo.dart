@@ -63,4 +63,33 @@ class Reclamo {
       'archivos': archivos.map((e) => e.toMap()).toList(),
     };
   }
+
+  factory Reclamo.fromMap(Map<String, dynamic> data) {
+    return Reclamo(
+      data['_id'],
+      data['fechaReclamo'],
+      data['fechaIngreso'],
+      data['tipo'],
+      data['nombreCliente'],
+      data['embarque'],
+      data['comercial'],
+      data['motivo'],
+      data['producto'],
+      data['observacionMotivo'],
+      data['tipoReclamo'],
+      data['otroTipo'],
+      data['personal'],
+      data['resolucion'],
+      data['resolucionComercial'] ?? '',
+      data['estado'],
+      (data['imagenes'] as List<dynamic>?)
+              ?.map((item) => Imagenes.fromMap(item))
+              .toList() ??
+          [],
+      (data['archivos'] as List<dynamic>?)
+              ?.map((item) => Archivos.fromMap(item))
+              .toList() ??
+          [],
+    );
+  }
 }
