@@ -31,9 +31,11 @@ class _GaleryScreenState extends State<GaleryScreen> {
             padding: const EdgeInsets.only(right: 20.0),
             child: IconButton(
                 onPressed: () async {
-                  cargarYGuardarImagenes(
-                      context, widget.perfil, widget.reclamo);
-                  await  provider.getReclamoById(widget.reclamo.objectId!);
+                  cargarYGuardarImagenes(context, widget.perfil, widget.reclamo)
+                      .then((_) {
+                    provider.getReclamoById(widget.reclamo.objectId!);
+                      });
+                  // await  provider.getReclamoById(widget.reclamo.objectId!);
                 },
                 icon: const Icon(Icons.add_a_photo_sharp)),
           )

@@ -47,6 +47,10 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
             ? 3
             : 4;
     _loadUserRole();
+    final provider = Provider.of<Myprovider>(context, listen: false);
+    if (widget.reclamo.objectId != null) {
+      provider.getReclamoById(widget.reclamo.objectId!);
+    }
   }
 
   Future<void> _loadUserRole() async {
@@ -62,7 +66,7 @@ class _DetailsReclamosState extends State<DetailsReclamos> {
     return Scaffold(
             appBar: AppBarAdd(title: 'Detalles Reclamos',
             perfil: userRole ?? '',
-        reclamo: reclamo,),
+        reclamo: myProvider.reclamo,),
       // appBar: appBarDetails(context, reclamo),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
