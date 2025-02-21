@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "AnakenaReclamos"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.2"
 #define MyAppPublisher "Anakena "
 #define MyAppURL "www.anakena.cl"
 #define MyAppExeName "reclamos_anakena.exe"
