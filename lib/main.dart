@@ -1,6 +1,5 @@
 import 'package:reclamos_anakena/barrels.dart';
 
-
 Future<String> getInitialRoute() async {
   final prefs = await SharedPreferences.getInstance();
   final bool isLoggedIn = prefs.getString('nombre') != null;
@@ -47,16 +46,21 @@ class MyApp extends StatelessWidget {
                 "/home": (context) => const AdminReclamos(),
                 "/add_reclamos": (context) => const AddReclamos(),
                 "/details_reclamos": (context) => DetailsReclamos(
-                    reclamo: ModalRoute.of(context)!.settings.arguments as Reclamo),
+                    reclamo:
+                        ModalRoute.of(context)!.settings.arguments as Reclamo),
                 "/galery_screen": (context) {
-                  final Reclamo miDato =
-                      ModalRoute.of(context)!.settings.arguments as Reclamo;
-                  return GaleryScreen(reclamo: miDato);
+                  final Map arguments =
+                      ModalRoute.of(context)!.settings.arguments as Map;
+                  return GaleryScreen(
+                    reclamo: arguments['reclamo'],
+                    perfil: arguments['perfil'],
+                  );
                 },
                 "/galery_files": (context) {
-                  final Reclamo miDato =
-                      ModalRoute.of(context)!.settings.arguments as Reclamo;
-                  return GalleryFiles(reclamo: miDato);
+                    final Map arguments =
+                      ModalRoute.of(context)!.settings.arguments as Map;
+                  return GalleryFiles(reclamo: arguments['reclamo'],
+                    perfil: arguments['perfil'],);
                 },
               },
             ),

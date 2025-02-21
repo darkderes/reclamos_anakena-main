@@ -17,61 +17,46 @@ class AppBarAdd extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text(title),
       actions: [
-        const UserData(),
         Visibility(
           visible: reclamo.objectId != null ? true : false,
-          child: IconButton(
-            icon: const Icon(Icons.all_inbox_rounded, color: Colors.white),
-            onPressed: () {
-              Navigator.pushNamed(context, "/galery_files", arguments: reclamo);
-            },
+          child: Badge.count(
+            count: reclamo.archivos.length,
+            child: IconButton(
+              icon: const Icon(Icons.all_inbox_rounded, color: Colors.white),
+              onPressed: () {
+                Navigator.pushNamed(context, "/galery_files",
+                   arguments: {
+                      'reclamo': reclamo,
+                      'perfil': perfil,
+                    },);
+              },
+            ),
           ),
         ),
-        Visibility(
-          visible: reclamo.objectId != null ? true : false,
-          child: IconButton(
-            icon: const Icon(Icons.cloud_download_sharp, color: Colors.white),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return Dialog(
-                    child: SizedBox(
-                      // Puedes ajustar el tamaño del contenedor según tus necesidades
-                      width: 500,
-                      height: 300,
-                      child: LoadFiles(
-                        seccion: perfil,
-                        reclamo: reclamo,
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-        ),
-        Visibility(
-          visible: reclamo.objectId != null ? true : false,
-          child: IconButton(
-            icon: const Icon(Icons.collections, color: Colors.white),
-            onPressed: () {
-              Navigator.pushNamed(context, "/galery_screen",
-                  arguments: reclamo);
-            },
-          ),
-        ),
+   
         Padding(
-          padding: const EdgeInsets.only(right: 20.0),
+          padding: const EdgeInsets.only(right: 10.0),
           child: Visibility(
             visible: reclamo.objectId != null ? true : false,
-            child: IconButton(
-                onPressed: () async {
-                  cargarYGuardarImagenes(context,perfil, reclamo);
+            child: Badge.count(
+              count: reclamo.imagenes.length,
+              child: IconButton(
+                icon: const Icon(Icons.collections, color: Colors.white),
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    "/galery_screen",
+                    arguments: {
+                      'reclamo': reclamo,
+                      'perfil': perfil,
+                    },
+                  );
                 },
-                icon: const Icon(Icons.add_a_photo_sharp)),
+              ),
+            ),
           ),
-        )
+        ),
+        const UserData(),
       ],
     );
   }

@@ -61,10 +61,21 @@ class _UserDataState extends State<UserData> {
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         PopupMenuItem<String>(
           value: 'changeData',
-          child: Row(
+          child: Column(
             children: [
-              const Icon(Icons.person, color: Color.fromARGB(255, 107, 93, 16)),
-              Text(nombre),
+              Row(
+                children: [
+                  const Icon(Icons.account_circle_rounded, color: Color.fromARGB(255, 107, 93, 16)),
+                  Text(nombre),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Icon(Icons.person, color: Color.fromARGB(255, 107, 93, 16)),
+                  Text(rol),
+                ],
+              ),
             ],
           ),
         ),
@@ -79,11 +90,14 @@ class _UserDataState extends State<UserData> {
           ),
         ),
       ],
-      child: CircleAvatar(
-        backgroundColor: const Color.fromARGB(255, 122, 93, 49),
-        child: Text(
-         _getInitials(nombre),
-          style: const TextStyle(color: Colors.white),
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20.0),
+        child: CircleAvatar(
+          backgroundColor: const Color.fromARGB(255, 122, 93, 49),
+          child: Text(
+           _getInitials(nombre),
+            style: const TextStyle(color: Colors.white),
+          ),
         ),
       ),
     );

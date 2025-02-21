@@ -3,14 +3,15 @@ import 'package:reclamos_anakena/barrels.dart';
 class GaleryScreen extends StatefulWidget {
   // final String proceso;
   final Reclamo reclamo;
-  const GaleryScreen({super.key, required this.reclamo});
+  final String perfil;
+  const GaleryScreen({super.key, required this.reclamo, required this.perfil});
 
   @override
   State<GaleryScreen> createState() => _GaleryScreenState();
 }
 
 class _GaleryScreenState extends State<GaleryScreen> {
-     @override
+  @override
   void initState() {
     super.initState();
     final provider = Provider.of<Myprovider>(context, listen: false);
@@ -18,12 +19,25 @@ class _GaleryScreenState extends State<GaleryScreen> {
       provider.getReclamoById(widget.reclamo.objectId!);
     }
   }
+
   @override
   Widget build(BuildContext context) {
-      final provider = Provider.of<Myprovider>(context, listen: true);
+    final provider = Provider.of<Myprovider>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Galeria de Imagenes'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: IconButton(
+                onPressed: () async {
+                  cargarYGuardarImagenes(
+                      context, widget.perfil, widget.reclamo);
+                  await  provider.getReclamoById(widget.reclamo.objectId!);
+                },
+                icon: const Icon(Icons.add_a_photo_sharp)),
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -43,7 +57,10 @@ class _GaleryScreenState extends State<GaleryScreen> {
                     return const Padding(
                       padding: EdgeInsets.all(15.0),
                       child: Center(
-                        child: Text('No hay imágenes disponibles area comercial.',style: TextStyle(fontWeight: FontWeight.bold),),
+                        child: Text(
+                          'No hay imágenes disponibles area comercial.',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     );
                   }
@@ -51,7 +68,13 @@ class _GaleryScreenState extends State<GaleryScreen> {
                     children: [
                       const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('Imagenes subidas Comercial', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color:Colors.brown),),
+                        child: Text(
+                          'Imagenes subidas Comercial',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.brown),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -80,7 +103,6 @@ class _GaleryScreenState extends State<GaleryScreen> {
                   (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Padding(
-
                     padding: EdgeInsets.all(16.0),
                     child: Center(
                       child: CircularProgressIndicator(),
@@ -89,17 +111,25 @@ class _GaleryScreenState extends State<GaleryScreen> {
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else if (snapshot.hasData) {
-
                   if (snapshot.data!.isEmpty) {
                     return const Center(
-                      child: Text('No hay imágenes disponibles area calidad.',style: TextStyle(fontWeight: FontWeight.bold),),
+                      child: Text(
+                        'No hay imágenes disponibles area calidad.',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     );
                   }
                   return Column(
-                    children:  [
+                    children: [
                       const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('Imagenes subidas Calidad', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color:Colors.brown),),
+                        child: Text(
+                          'Imagenes subidas Calidad',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.brown),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -131,7 +161,7 @@ class _GaleryScreenState extends State<GaleryScreen> {
   Future<List<Widget>> _imagenesList(Reclamo reclamo, String section) async {
     List<Widget> lista = [];
 
-     List<Imagenes> imagenes = reclamo.imagenes;
+    List<Imagenes> imagenes = reclamo.imagenes;
 
     // Filtrar imágenes por sección
     if (section != "0") {
@@ -160,13 +190,10 @@ class _GaleryScreenState extends State<GaleryScreen> {
             );
           },
           //Child(),
-          child:
-           Image.network(item.url, fit: BoxFit.cover),
+          child: Image.network(item.url, fit: BoxFit.cover),
         ),
       );
     }
     return lista;
   }
-
-
 }
